@@ -325,7 +325,7 @@ function YourModel() {
               Built for creators, by creators
             </h2>
             <p className="text-lg text-slate-400 max-w-3xl mx-auto">
-              We're passionate about pushing the boundaries of web technology and making 
+              We&apos;re passionate about pushing the boundaries of web technology and making 
               3D experiences accessible to everyone.
             </p>
           </div>

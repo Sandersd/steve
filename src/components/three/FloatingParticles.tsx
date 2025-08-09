@@ -1,10 +1,9 @@
 'use client'
 
 import { useMemo } from 'react'
-import { Float, Instances, Instance } from '@react-three/drei'
+import { Float } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
-import PearlescentMaterial from './shaders/PearlescentMaterial'
 
 interface FloatingParticlesProps {
   count?: number
@@ -14,7 +13,7 @@ interface FloatingParticlesProps {
   speed?: number
   rotationIntensity?: number
   floatIntensity?: number
-  material?: any
+  material?: THREE.Material
 }
 
 /**
@@ -42,8 +41,9 @@ export default function FloatingParticles({
   useFrame((state) => {
     if (particleMaterials) {
       particleMaterials.forEach(mat => {
-        if (mat && mat.time !== undefined) {
-          mat.time = state.clock.elapsedTime
+        if (mat && 'time' in mat && typeof (mat as { time?: number }).time !== 'undefined') {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (mat as any).time = state.clock.elapsedTime
         }
       })
     }

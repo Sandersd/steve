@@ -19,12 +19,12 @@ interface PostProcessingProps {
  */
 export default function PostProcessing({
   enableBloom = true,
-  enableVignette = true,
+  enableVignette = false,
   enableToneMapping = true,
   bloomIntensity = 2.0,
   bloomThreshold = 0.4,
-  vignetteOpacity = 0.5,
-  vignetteOffset = 0.1
+  vignetteOpacity = 0.2,
+  vignetteOffset = 0.3
 }: PostProcessingProps) {
   const effects: ReactElement[] = []
 

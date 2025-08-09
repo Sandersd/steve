@@ -1,12 +1,11 @@
 'use client'
 
-import { useRef, useLayoutEffect, ReactNode, useState, useCallback } from 'react'
+import { useRef, useLayoutEffect, ReactNode, useCallback } from 'react'
 import { useThree, useFrame } from '@react-three/fiber'
 import { Group } from 'three'
 import * as THREE from 'three'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import type { CameraSettings } from '@/types/three'
 
 // Register GSAP plugin
 if (typeof window !== 'undefined') {
@@ -23,10 +22,6 @@ const GROUP_END   = { rx: -0.2, ry: Math.PI * 0.6, rz: 0 }
 interface CameraRigProps {
   children?: ReactNode
   trigger?: string
-  cameraStart?: CameraSettings
-  cameraEnd?: CameraSettings
-  groupRotationStart?: [number, number, number]
-  groupRotationEnd?: [number, number, number]
   scrollStart?: string
   scrollEnd?: string
   scrub?: boolean | number
@@ -41,10 +36,6 @@ interface CameraRigProps {
 export default function CameraRig({
   children,
   trigger = 'body',
-  cameraStart,
-  cameraEnd,
-  groupRotationStart,
-  groupRotationEnd,
   scrollStart = 'top bottom',
   scrollEnd = 'bottom bottom',
   scrub = 1,
@@ -52,9 +43,8 @@ export default function CameraRig({
   enableMouseParallax = true,
   parallaxIntensity = 0.1
 }: CameraRigProps) {
-  const { camera, viewport } = useThree()
+  const { camera } = useThree()
   const groupRef = useRef<Group>(null!)
-  const [mouse, setMouse] = useState({ x: 0, y: 0 })
   const mouseTargetRef = useRef({ x: 0, y: 0 })
   const mouseLerpRef = useRef({ x: 0, y: 0 })
 
