@@ -69,29 +69,54 @@ const fragmentShader = /* glsl */ `
     // Calculate Fresnel effect
     float fresnelFactor = uFresnelBias + (1.0 - uFresnelBias) * pow(1.0 - max(dot(normal, viewDir), 0.0), uFresnelPower);
     
-    // Create pearlescent color gradient based on Fresnel
-    vec3 baseColor = mix(uColorPrimary, uColorSecondary, fresnelFactor);
-    vec3 pearlescentColor = mix(baseColor, uColorAccent, smoothstep(0.4, 1.0, fresnelFactor));
+    // Organic animated color blending using world position and time
+    float wave1 = sin(vWorldPosition.y * 2.0 + uTime * 0.5) * 0.5 + 0.5;
+    float wave2 = sin(vWorldPosition.x * 1.5 + uTime * 0.3) * 0.5 + 0.5;
+    float wave3 = sin(vWorldPosition.z * 1.8 + uTime * 0.4) * 0.5 + 0.5;
     
-    // Add subtle noise for organic feel
-    vec2 noiseCoord = vWorldPosition.xy * uNoiseScale + uTime * 0.1;
-    float noiseValue = noise(noiseCoord) * 2.0 - 1.0;
-    pearlescentColor += vec3(noiseValue * uNoiseStrength);
+    // Create organic blend between three colors
+    float greenToBlue = smoothstep(0.0, 1.0, wave1);
+    float blueToPink = smoothstep(0.0, 1.0, wave2);
     
-    // Rim lighting effect
-    float rimLight = pow(fresnelFactor, 2.0) * uRimIntensity;
-    vec3 rimColor = vec3(rimLight);
+    // Mix colors organically
+    vec3 color1 = mix(uColorPrimary, uColorSecondary, greenToBlue);
+    vec3 color2 = mix(uColorSecondary, uColorAccent, blueToPink);
+    vec3 pearlescentColor = mix(color1, color2, wave3 * fresnelFactor);
+    
+    // Add subtle noise for more organic variation
+    vec2 noiseCoord1 = vWorldPosition.xy * uNoiseScale + uTime * 0.1;
+    vec2 noiseCoord2 = vWorldPosition.xz * uNoiseScale * 0.8 + uTime * 0.15;
+    float noiseValue1 = noise(noiseCoord1) * 2.0 - 1.0;
+    float noiseValue2 = noise(noiseCoord2) * 2.0 - 1.0;
+    float organicNoise = (noiseValue1 + noiseValue2) * 0.5;
+    pearlescentColor += vec3(organicNoise * uNoiseStrength);
+    
+    // Dynamic rim lighting that pulses organically
+    float rimPulse = sin(uTime * 1.0) * 0.3 + 0.7;
+    float rimLight = pow(fresnelFactor, 2.0) * uRimIntensity * rimPulse;
+    vec3 rimColor = mix(uColorSecondary, uColorAccent, wave1) * rimLight;
     
     // Fake subsurface scattering (wrap around lighting)
     vec3 lightDirection = normalize(vec3(0.5, 1.0, 0.3));
     float wrap = max(0.0, (dot(normal, lightDirection) + 1.0) * 0.5);
     float subsurface = pow(wrap, 1.5) * 0.3;
     
-    // Combine all effects with minimum brightness to prevent dark flash
-    vec3 finalColor = pearlescentColor * (0.8 + subsurface) + rimColor;
+    // Add metallic reflections for shiny appearance
+    float metallic = 0.9;
+    vec3 metallicTint = mix(vec3(1.0), pearlescentColor, metallic);
+    
+    // Boost specular highlights
+    float specular = pow(max(dot(reflect(-lightDirection, normal), viewDir), 0.0), 32.0) * 2.0;
+    vec3 specularColor = vec3(specular) * metallicTint;
+    
+    // Combine all effects with metallic boost
+    vec3 finalColor = pearlescentColor * (0.8 + subsurface) * metallicTint + rimColor + specularColor;
+    
+    // Boost brightness for bloom effect
+    finalColor *= 1.5;
     
     // Ensure minimum brightness to prevent dark flash during shader compilation
-    finalColor = max(finalColor, vec3(0.1));
+    finalColor = max(finalColor, vec3(0.2));
     
     gl_FragColor = vec4(finalColor, 1.0);
   }

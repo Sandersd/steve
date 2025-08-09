@@ -21,8 +21,8 @@ export default function PostProcessing({
   enableBloom = true,
   enableVignette = true,
   enableToneMapping = true,
-  bloomIntensity = 1.2,
-  bloomThreshold = 0.6,
+  bloomIntensity = 2.0,
+  bloomThreshold = 0.4,
   vignetteOpacity = 0.5,
   vignetteOffset = 0.1
 }: PostProcessingProps) {
