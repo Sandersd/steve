@@ -11,9 +11,32 @@ export default function Home() {
   return (
     <>
       <Header />
-      <main className="relative">
+      
+      {/* Three.js Canvas - Fixed background for entire page */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <Suspense 
+          fallback={
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-slate-500">Loading 3D scene...</div>
+            </div>
+          }
+        >
+          <ThreeCanvas
+            performance={{
+              enableShadows: settings.shadows,
+              antialias: settings.antialias,
+              pixelRatio: settings.pixelRatio,
+              shadowMapSize: settings.shadowMapSize
+            }}
+            enableScrollAnimation={true}
+            scrollTrigger="body"
+          />
+        </Suspense>
+      </div>
+
+      <main className="relative z-10">
         {/* Hero Section - Scroll trigger target */}
-        <section className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
+        <section id="hero" className="min-h-screen">
           <div className="relative min-h-screen flex items-center justify-center pt-16">
             <div className="text-center z-10 relative px-6">
               <div className="inline-flex items-center px-4 py-2 bg-white/80 backdrop-blur-sm border border-slate-200 rounded-full text-sm text-slate-600 mb-8">
@@ -47,32 +70,10 @@ export default function Home() {
               </div>
             </div>
           </div>
-
-          {/* Three.js Canvas */}
-          <div id="hero" className="fixed inset-0 pointer-events-none z-0">
-            <Suspense 
-              fallback={
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-slate-500">Loading 3D scene...</div>
-                </div>
-              }
-            >
-              <ThreeCanvas
-                performance={{
-                  enableShadows: settings.shadows,
-                  antialias: settings.antialias,
-                  pixelRatio: settings.pixelRatio,
-                  shadowMapSize: settings.shadowMapSize
-                }}
-                enableScrollAnimation={true}
-                scrollTrigger="body"
-              />
-            </Suspense>
-          </div>
         </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 bg-white">
+      <section id="features" className="py-20 bg-white/90 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold text-slate-800 mb-6">
@@ -182,7 +183,7 @@ export default function Home() {
       </section>
 
       {/* Showcase Section */}
-      <section id="showcase" className="py-20 bg-slate-50">
+      <section id="showcase" className="py-20 bg-slate-50/90 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold text-slate-800 mb-6">
@@ -250,7 +251,7 @@ export default function Home() {
       </section>
 
       {/* Getting Started Section */}
-      <section id="getting-started" className="py-20 bg-white">
+      <section id="getting-started" className="py-20 bg-white/90 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold text-slate-800 mb-6">
