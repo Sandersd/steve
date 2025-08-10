@@ -14,7 +14,7 @@ export default function Home() {
       <Header />
       
       {/* Three.js Canvas - Fixed background for entire page */}
-      <div className="fixed inset-0 pointer-events-none z-0">
+      <div className="canvas-container">
         <Suspense 
           fallback={
             <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-slate-100">

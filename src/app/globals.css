@@ -30,6 +30,34 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Fix for mobile viewport height changes (Safari URL bar) */
+.canvas-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh; /* Fallback for older browsers */
+  height: 100svh; /* Use small viewport height (with URL bar visible) */
+  height: -webkit-fill-available; /* Additional iOS Safari fallback */
+  pointer-events: none;
+  z-index: 0;
+  /* Prevent layout shift during viewport changes */
+  contain: layout style paint;
+  will-change: transform;
+}
+
+/* Additional mobile-specific optimizations */
+@media (max-width: 768px) and (hover: none) {
+  .canvas-container {
+    /* Use the smallest viewport to prevent resizing */
+    height: 100vh;
+    height: 100svh;
+    /* Prevent rubber-band scrolling from affecting the canvas */
+    position: fixed;
+    overflow: hidden;
+  }
+}
+
 /* Prevent any flickering during backdrop blur transitions */
 section {
   will-change: backdrop-filter;
