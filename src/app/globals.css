@@ -24,3 +24,22 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Ensure smooth scrolling and prevent layout shifts */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Prevent any flickering during backdrop blur transitions */
+section {
+  will-change: backdrop-filter;
+  transform: translateZ(0); /* Force hardware acceleration */
+}
+
+/* Optimize backdrop blur rendering */
+.backdrop-blur-sm,
+.backdrop-blur-md {
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  transform: translateZ(0);
+}
