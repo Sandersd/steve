@@ -1,6 +1,9 @@
 {
-  "name": "r3f-professional-starter",
-  "version": "0.1.0",
+  "name": "3d-studio-starter",
+  "version": "1.0.0",
+  "description": "Professional Three.js development platform with custom shaders and animations",
+  "author": "3D Studio",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "dev": "next dev",
