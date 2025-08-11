@@ -1,11 +1,11 @@
 'use client'
 
-import { useRef, useLayoutEffect, ReactNode, useCallback } from 'react'
-import { useThree, useFrame } from '@react-three/fiber'
-import { Group } from 'three'
-import * as THREE from 'three'
+import { useFrame, useThree } from '@react-three/fiber'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { ReactNode, useCallback, useLayoutEffect, useRef } from 'react'
+import * as THREE from 'three'
+import { Group } from 'three'
 
 // Register GSAP plugin
 if (typeof window !== 'undefined') {
@@ -17,7 +17,7 @@ const CAM_START = { x: 0.2, y: 0.4, z: 1.8, rx: 0, ry: 0, rz: 0 }
 const CAM_END   = { x: 0.6, y: 0.3, z: 1.6, rx: -0.1, ry: 0.2, rz: 0 }
 
 const GROUP_START = { rx: -0.1, ry: Math.PI * 0.45, rz: 0 }
-const GROUP_END   = { rx: -0.2, ry: Math.PI * 0.6, rz: 0 }
+const GROUP_END   = { rx: -0.2, ry: Math.PI * 1, rz: 0 }
 
 interface CameraRigProps {
   children?: ReactNode

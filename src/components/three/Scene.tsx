@@ -1,14 +1,14 @@
 'use client'
 
-import { useMemo } from 'react'
-import { useFrame } from '@react-three/fiber'
 import { Environment } from '@react-three/drei'
+import { useFrame } from '@react-three/fiber'
+import { useMemo } from 'react'
 import * as THREE from 'three'
 
-import PearlescentMaterial from './shaders/PearlescentMaterial'
-import HandPlaceholder from './models/HandPlaceholder'
-import FloatingParticles from './FloatingParticles'
 import type { SceneProps } from '@/types/three'
+import FloatingParticles from './FloatingParticles'
+import Steve from './models/Steve'
+import PearlescentMaterial from './shaders/PearlescentMaterial'
 
 interface MainSceneProps extends SceneProps {
   enableEnvironment?: boolean
@@ -73,10 +73,17 @@ export default function Scene({
       )}
 
       {/* Main hand model with pearlescent material */}
-      <HandPlaceholder 
+      {/* <HandPlaceholder 
         material={pearlescentMaterial}
         position={[0, -0.2, 0]}
         scale={0.9}
+        castShadow
+        receiveShadow
+      /> */}
+      <Steve 
+        material={pearlescentMaterial}
+        position={[0, 0, 0]}
+        scale={0.4}
         castShadow
         receiveShadow
       />

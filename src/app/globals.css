@@ -71,3 +71,32 @@ section {
   backdrop-filter: blur(8px);
   transform: translateZ(0);
 }
+
+/* Experience page specific styles */
+.experience-container {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1;
+}
+
+.content-sections {
+  position: relative;
+  background: black;
+  z-index: 10;
+}
+
+/* Ensure experience page starts at top */
+body:has([data-page="experience"]) {
+  scroll-behavior: auto;
+}
+
+/* Make sure canvas is behind UI elements but visible */
+.experience-container .canvas-container {
+  z-index: 0;
+  pointer-events: auto;
+}

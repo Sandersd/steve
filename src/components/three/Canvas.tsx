@@ -1,13 +1,13 @@
 'use client'
 
-import { Suspense } from 'react'
 import { Canvas } from '@react-three/fiber'
+import { Suspense } from 'react'
 import * as THREE from 'three'
 
-import Scene from './Scene'
+import type { CameraSettings, PerformanceSettings } from '@/types/three'
 import CameraRig from './CameraRig'
 import PostProcessing from './PostProcessing'
-import type { PerformanceSettings, CameraSettings } from '@/types/three'
+import Scene from './Scene'
 
 interface ThreeCanvasProps {
   className?: string
@@ -78,7 +78,7 @@ export default function ThreeCanvas({
             <CameraRig
               trigger={scrollTrigger}
               enableMouseParallax={true}
-              parallaxIntensity={0.3}
+              parallaxIntensity={0.5}
             >
               <Scene />
             </CameraRig>
