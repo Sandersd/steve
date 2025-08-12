@@ -13,19 +13,19 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "3D Studio - Professional Three.js Development Platform",
-  description: "Professional Three.js development platform with custom GLSL shaders, GSAP animations, and optimized performance for stunning web experiences",
-  keywords: "Three.js, WebGL, 3D, React Three Fiber, GSAP, Web Development",
-  authors: [{ name: "3D Studio" }],
+  title: "Steve - Spectacular 3D Experience & Music Visualization",
+  description: "Steve's cutting-edge 3D website featuring immersive music visualization, dynamic particle systems, and stunning scroll animations",
+  keywords: "Steve, 3D Experience, Music Visualization, WebGL, Three.js, Interactive Design",
+  authors: [{ name: "Steve" }],
   openGraph: {
-    title: "3D Studio - Professional Three.js Development",
-    description: "Build stunning 3D web experiences with our professional development platform",
+    title: "Steve - Spectacular 3D Experience",
+    description: "Experience Steve's revolutionary 3D website with music-reactive visuals and immersive animations",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "3D Studio",
-    description: "Professional Three.js development platform",
+    title: "Steve's 3D Experience",
+    description: "Revolutionary 3D website with music visualization",
   },
 };
 

@@ -29,13 +29,13 @@ interface FloatingParticlesProps {
  * A system of floating instanced particles for ambient scene decoration
  */
 export default function FloatingParticles({
-  count = 60,
-  spread = 4,
-  height = 2,
-  depth = 2,
-  speed = 0.6,
-  rotationIntensity = 0.3,
-  floatIntensity = 0.7,
+  count = 120, // Doubled for more spectacular effect
+  spread = 8,  // Wider spread for immersive experience
+  height = 5,  // Taller for more dramatic presence  
+  depth = 4,   // Deeper for 3D immersion
+  speed = 0.8, // Slightly faster base movement
+  rotationIntensity = 0.5, // More rotation
+  floatIntensity = 1.0,    // More floating motion
   audioData,
   isAudioPlaying = false
 }: FloatingParticlesProps) {
@@ -44,13 +44,35 @@ export default function FloatingParticles({
   const particleMaterials = useMemo(() => {
     console.log('FloatingParticles: Creating music-reactive materials for', count, 'particles')
     
-    const materials = Array.from({ length: count }, () => new MusicReactiveMaterial({
-      baseColor: new THREE.Color('#ff8c42'), // Bright orange base
-      bassColor: new THREE.Color('#ff6b35'), // Deep orange for bass
-      midColor: new THREE.Color('#ffa726'), // Medium orange for mid  
-      trebleColor: new THREE.Color('#ffcc80'), // Light orange for treble
-      beatColor: new THREE.Color('#fff3e0') // Very light orange for beats
-    }))
+    const materials = Array.from({ length: count }, (_, index) => {
+      // Create varied color palettes for more visual diversity
+      const colorVariants = [
+        {
+          baseColor: new THREE.Color('#D98616'), // Steve's main orange
+          bassColor: new THREE.Color('#B87014'), // Steve's dark orange for bass
+          midColor: new THREE.Color('#E5A94A'), // Steve's light orange for mid  
+          trebleColor: new THREE.Color('#FF9A1F'), // Steve's bright orange for treble
+          beatColor: new THREE.Color('#F5F4F0')   // Steve's off-white for beats
+        },
+        {
+          baseColor: new THREE.Color('#E5A94A'), // Steve's light orange variant
+          bassColor: new THREE.Color('#D98616'), // Steve's main orange
+          midColor: new THREE.Color('#FF9A1F'),  // Steve's bright orange
+          trebleColor: new THREE.Color('#F5F4F0'), // Steve's off-white
+          beatColor: new THREE.Color('#CEC4B6')   // Steve's cream
+        },
+        {
+          baseColor: new THREE.Color('#C3B094'), // Steve's light brown
+          bassColor: new THREE.Color('#916332'), // Steve's dark brown for bass
+          midColor: new THREE.Color('#D98616'),  // Steve's orange for mid
+          trebleColor: new THREE.Color('#E5A94A'), // Steve's light orange for treble
+          beatColor: new THREE.Color('#F5F4F0')   // Steve's off-white for beats
+        }
+      ]
+      
+      const variant = colorVariants[index % colorVariants.length]
+      return new MusicReactiveMaterial(variant)
+    })
     
     console.log('🎶 FloatingParticles: Created', materials.length, 'music-reactive materials')
     return materials
@@ -131,15 +153,22 @@ export default function FloatingParticles({
           castShadow
           receiveShadow
         >
-          <boxGeometry args={[0.05, 0.03, 0.02]} />
+          {/* Use varied geometric shapes for more visual interest */}
+          {index % 3 === 0 ? (
+            <sphereGeometry args={[0.03, 8, 6]} />
+          ) : index % 3 === 1 ? (
+            <boxGeometry args={[0.04, 0.04, 0.04]} />
+          ) : (
+            <octahedronGeometry args={[0.035, 0]} />
+          )}
           {particleMaterials && particleMaterials[index] ? (
             <primitive object={particleMaterials[index]} attach="material" />
           ) : (
             <meshStandardMaterial 
-              color="#ff8c42"
+              color="#D98616"
               metalness={0.8}
               roughness={0.1}
-              emissive="#ff8c42"
+              emissive="#D98616"
               emissiveIntensity={0.4}
             />
           )}

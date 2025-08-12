@@ -1,8 +1,20 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #000000;
+  --foreground: #FFFFFF;
+  
+  /* Steve's Color Palette */
+  --steve-cream: #CEC4B6;
+  --steve-orange: #D98616;
+  --steve-light-brown: #C3B094;
+  --steve-dark-brown: #916332;
+  --steve-off-white: #F5F4F0;
+  
+  /* Additional orange shades for variety */
+  --steve-orange-light: #E5A94A;
+  --steve-orange-dark: #B87014;
+  --steve-orange-bright: #FF9A1F;
 }
 
 @theme inline {
@@ -10,6 +22,16 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  
+  /* Steve's custom colors for Tailwind */
+  --color-steve-cream: #CEC4B6;
+  --color-steve-orange: #D98616;
+  --color-steve-light-brown: #C3B094;
+  --color-steve-dark-brown: #916332;
+  --color-steve-off-white: #F5F4F0;
+  --color-steve-orange-light: #E5A94A;
+  --color-steve-orange-dark: #B87014;
+  --color-steve-orange-bright: #FF9A1F;
 }
 
 @media (prefers-color-scheme: dark) {

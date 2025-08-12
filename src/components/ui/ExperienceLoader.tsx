@@ -14,7 +14,7 @@ export default function ExperienceLoader({
   className = ''
 }: ExperienceLoaderProps) {
   const [loadingProgress, setLoadingProgress] = useState(0)
-  const [loadingText, setLoadingText] = useState('Initializing 3D Studio...')
+  const [loadingText, setLoadingText] = useState('Initializing Steve...')
   const [showStartButton, setShowStartButton] = useState(false)
 
   // Simulate loading progress
@@ -29,16 +29,16 @@ export default function ExperienceLoader({
           return 100
         } else if (prev >= 90) {
           // Waiting for models
-          setLoadingText('Loading 3D models...')
+          setLoadingText('Steve is almost ready to dance!')
           return 90
         } else {
           // Normal loading progression
           const texts = [
-            'Initializing 3D Studio...',
-            'Loading shaders...',
-            'Preparing audio system...',
-            'Setting up materials...',
-            'Loading 3D models...'
+            'Initializing Steve...',
+            'Teaching Steve to dance...',
+            'Loading orange particles...',
+            'Preparing Pa-la-la music...',
+            'Steve is getting ready...'
           ]
           const textIndex = Math.floor((prev / 100) * texts.length)
           setLoadingText(texts[textIndex] || texts[texts.length - 1])
@@ -51,24 +51,24 @@ export default function ExperienceLoader({
   }, [modelsLoaded])
 
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center bg-slate-900 ${className}`}>
+    <div className={`fixed inset-0 z-50 flex items-center justify-center ${className}`} style={{background: 'linear-gradient(135deg, var(--steve-dark-brown), var(--steve-orange-dark))'}}>
       <div className="text-center px-6">
         {/* Minimal Logo */}
         <div className="mb-12">
-          <h1 className="text-5xl font-bold text-white mb-3">3D Studio</h1>
+          <h1 className="text-5xl font-bold text-white mb-3">STEVE</h1>
         </div>
 
         {!showStartButton ? (
           <>
             {/* Minimal Loading */}
             <div className="mb-8">
-              <div className="w-48 h-1 bg-slate-800 rounded-full mx-auto mb-6 overflow-hidden">
+              <div className="w-48 h-1 rounded-full mx-auto mb-6 overflow-hidden" style={{background: 'var(--steve-dark-brown)'}}>
                 <div 
-                  className="h-full bg-white rounded-full transition-all duration-300 ease-out"
-                  style={{ width: `${loadingProgress}%` }}
+                  className="h-full rounded-full transition-all duration-300 ease-out"
+                  style={{ width: `${loadingProgress}%`, background: 'var(--steve-orange)' }}
                 />
               </div>
-              <p className="text-slate-400 text-sm">{loadingText}</p>
+              <p className="text-sm" style={{color: 'var(--steve-cream)'}}>{loadingText}</p>
             </div>
           </>
         ) : (
@@ -77,9 +77,12 @@ export default function ExperienceLoader({
             <div className="mb-8">
               <button
                 onClick={onStartExperience}
-                className="px-12 py-4 bg-white text-slate-900 rounded-lg hover:bg-slate-100 transition-all transform hover:scale-105 font-semibold text-lg"
+                className="px-12 py-4 rounded-lg transition-all transform hover:scale-105 font-semibold text-lg"
+                style={{background: 'var(--steve-orange)', color: 'white'}}
+                onMouseEnter={(e) => e.target.style.background = 'var(--steve-orange-bright)'}
+                onMouseLeave={(e) => e.target.style.background = 'var(--steve-orange)'}
               >
-                Enter
+🐟 Enter Steve's World 🕺
               </button>
             </div>
           </>

@@ -34,7 +34,7 @@ export default function Scene({
   scale = 1,
   enableEnvironment = true,
   enableParticles = true,
-  particleCount = 60,
+  particleCount = 120, // Enhanced particle count for spectacular effect
   audioData,
   isAudioPlaying = false
 }: MainSceneProps) {
@@ -82,7 +82,7 @@ export default function Scene({
   
   // Fallback material while pearlescent material is loading
   const fallbackMaterial = useMemo(() => new THREE.MeshStandardMaterial({
-    color: '#98ff98', // Match original green
+    color: '#D98616', // Steve's main orange
     metalness: 0.9,
     roughness: 0.1
   }), [])
@@ -160,12 +160,12 @@ export default function Scene({
         <>
           <FloatingParticles 
             count={particleCount}
-            spread={8}
-            height={5}
-            depth={4}
-            speed={0.8}
-            rotationIntensity={0.4}
-            floatIntensity={0.6}
+            spread={10}    // Wider spread for more immersive experience
+            height={6}     // Taller for dramatic presence
+            depth={5}      // Deeper for enhanced 3D effect
+            speed={1.0}    // Faster movement for energy
+            rotationIntensity={0.6}  // More rotation for dynamic motion
+            floatIntensity={0.8}     // Enhanced floating for organic feel
             audioData={audioData}
             isAudioPlaying={isAudioPlaying}
           />

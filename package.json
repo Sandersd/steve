@@ -1,8 +1,8 @@
 {
-  "name": "3d-studio-starter",
+  "name": "steve-site",
   "version": "1.0.0",
-  "description": "Professional Three.js development platform with custom shaders and animations",
-  "author": "3D Studio",
+  "description": "Steve's spectacular modern 3D experience with enhanced music visualization and animations",
+  "author": "Steve",
   "license": "MIT",
   "private": true,
   "scripts": {

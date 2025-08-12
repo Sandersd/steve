@@ -22,7 +22,7 @@ export default function ExperienceScene() {
   const scanLineRef = useRef<THREE.Mesh>(null!)
 
   // Load hand model for groupA
-  const gltf = useLoader(GLTFLoader, '/models/Stev3.glb')
+  const gltf = useLoader(GLTFLoader, '/models/Steve-walk.glb')
   
   // Create pearlescent material for hand
   const pearlescentMaterial = useMemo(() => new PearlescentMaterial({

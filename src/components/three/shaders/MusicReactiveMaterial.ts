@@ -19,17 +19,29 @@ const vertexShader = /* glsl */ `
   void main() {
     vUv = uv;
     
-    // Apply beat-based scaling (reduced from 0.3 to 0.1 for less explosion)
-    float beatScale = 1.0 + (uBeat * uBeatStrength * 0.1);
+    // Enhanced beat-based scaling for more dramatic effect
+    float beatScale = 1.0 + (uBeat * uBeatStrength * 0.25);
     vec3 scaledPosition = position * beatScale;
     
-    // Add volume-based displacement (reduced to 0.02 for minimal movement)
-    float volumeDisplacement = sin(position.x * 10.0 + uTime * 2.0) * uVolume * 0.02;
-    scaledPosition.y += volumeDisplacement;
+    // Multi-layered volume-based displacement with wave patterns
+    float wave1 = sin(position.x * 15.0 + uTime * 3.0) * uVolume * 0.08;
+    float wave2 = cos(position.z * 12.0 + uTime * 2.5) * uVolume * 0.06;
+    scaledPosition.y += wave1;
+    scaledPosition.x += wave2 * 0.5;
     
-    // Add bass-reactive pulsing (reduced to 0.03 for minimal explosion)
-    float bassDisplacement = sin(uTime * 5.0) * uBass * 0.03;
-    scaledPosition += normal * bassDisplacement;
+    // Enhanced bass-reactive pulsing with multiple frequencies
+    float bassWave1 = sin(uTime * 6.0) * uBass * 0.12;
+    float bassWave2 = cos(uTime * 4.0 + position.y * 20.0) * uBass * 0.08;
+    scaledPosition += normal * (bassWave1 + bassWave2);
+    
+    // Treble-reactive sparkle displacement
+    float trebleJitter = sin(uTime * 15.0 + position.x * 30.0) * uTreble * 0.04;
+    scaledPosition += vec3(trebleJitter, trebleJitter * 0.5, trebleJitter * 0.3);
+    
+    // Mid-frequency orbital motion
+    float midOrbit = uMid * 0.1;
+    scaledPosition.x += sin(uTime * 3.0 + position.y * 8.0) * midOrbit;
+    scaledPosition.z += cos(uTime * 3.0 + position.x * 8.0) * midOrbit;
     
     // Transform position to world space
     vec4 worldPosition = modelMatrix * vec4(scaledPosition, 1.0);
@@ -94,19 +106,27 @@ const fragmentShader = /* glsl */ `
     vec3 normal = normalize(vNormal);
     vec3 viewDir = normalize(vViewDirection);
     
-    // Base color mixing based on frequency analysis
-    vec3 frequencyColor = mix(
-      mix(uBaseColor, uBassColor, uBass),
-      mix(uMidColor, uTrebleColor, uTreble),
-      uMid
-    );
+    // Advanced frequency-based color mixing with more dynamic blending
+    vec3 bassLayer = mix(uBaseColor, uBassColor, smoothstep(0.0, 1.0, uBass));
+    vec3 midLayer = mix(bassLayer, uMidColor, smoothstep(0.0, 1.0, uMid * 1.2));
+    vec3 trebleLayer = mix(midLayer, uTrebleColor, smoothstep(0.0, 1.0, uTreble * 1.5));
     
-    // Beat flash effect
-    vec3 beatFlash = uBeatColor * vBeatPulse;
-    vec3 finalColor = frequencyColor + beatFlash;
+    // Multi-layered beat flash with pulsing intensity
+    float beatPulse = vBeatPulse * (1.0 + sin(uTime * 20.0) * 0.3);
+    vec3 beatFlash = uBeatColor * beatPulse * 1.5;
     
-    // Volume-based brightness
-    float volumeBrightness = 0.5 + (uVolume * 0.5);
+    // Dynamic color oscillation based on audio energy
+    float audioEnergy = (uBass + uMid + uTreble) / 3.0;
+    vec3 energyShift = vec3(
+      sin(uTime * 5.0 + audioEnergy * 10.0) * 0.2,
+      cos(uTime * 4.0 + audioEnergy * 8.0) * 0.15,
+      sin(uTime * 6.0 + audioEnergy * 12.0) * 0.25
+    ) * audioEnergy;
+    
+    vec3 finalColor = trebleLayer + beatFlash + energyShift;
+    
+    // Enhanced volume-based brightness with non-linear scaling
+    float volumeBrightness = 0.4 + (pow(uVolume, 0.7) * 1.2);
     finalColor *= volumeBrightness;
     
     // Add noise texture based on audio
@@ -119,23 +139,37 @@ const fragmentShader = /* glsl */ `
     float fresnel = 1.0 - max(dot(normal, viewDir), 0.0);
     fresnel = pow(fresnel, 2.0);
     
-    // Enhanced audio-reactive rim lighting for more shimmer
-    float rimIntensity = 0.5 + (uVolume * 1.2) + (vBeatPulse * 0.8);
-    vec3 rimColor = mix(frequencyColor, uBeatColor, vBeatPulse) * fresnel * rimIntensity;
-    finalColor += rimColor * 1.3; // Extra bright rim
+    // Spectacular audio-reactive rim lighting with multiple layers
+    float rimIntensity = 0.6 + (uVolume * 2.0) + (vBeatPulse * 1.5);
+    float rimPulse = 1.0 + sin(uTime * 8.0 + audioEnergy * 15.0) * 0.4;
+    vec3 rimColor = mix(trebleLayer, uBeatColor, vBeatPulse) * fresnel * rimIntensity * rimPulse;
+    finalColor += rimColor * 2.0; // Much brighter rim effect
     
-    // Enhanced emissive glow based on audio energy (much more glow-y)
-    float emissiveStrength = uVolume * 1.5 + (uBass * 0.8) + (vBeatPulse * 1.2);
-    finalColor += finalColor * emissiveStrength * 0.6;
+    // Layered emissive glow with frequency separation
+    float bassGlow = uBass * 2.0;
+    float midGlow = uMid * 1.5;
+    float trebleGlow = uTreble * 1.8;
+    float beatGlow = vBeatPulse * 2.5;
     
-    // Ensure minimum glow for orange blocks
-    finalColor = max(finalColor, vec3(0.3)); // Higher minimum brightness for glow
+    float totalGlow = bassGlow + midGlow + trebleGlow + beatGlow;
+    finalColor += finalColor * totalGlow * 0.8;
     
-    // Add subtle sparkle on beats
-    if (vBeatPulse > 0.5) {
-      float sparkle = hash(vWorldPosition.xy + uTime) * vBeatPulse;
-      finalColor += vec3(sparkle * 0.5);
+    // Dynamic minimum brightness that pulses with the beat
+    float minGlow = 0.4 + (vBeatPulse * 0.3) + (sin(uTime * 3.0) * 0.1);
+    finalColor = max(finalColor, vec3(minGlow));
+    
+    // Enhanced sparkle effects with multiple patterns
+    float sparkleThreshold = 0.3;
+    if (vBeatPulse > sparkleThreshold) {
+      float sparkle1 = hash(vWorldPosition.xy + uTime) * vBeatPulse;
+      float sparkle2 = hash(vWorldPosition.yz + uTime * 1.5) * vBeatPulse * 0.7;
+      float sparkle3 = hash(vWorldPosition.xz + uTime * 0.8) * vBeatPulse * 0.9;
+      finalColor += vec3(sparkle1 + sparkle2 + sparkle3) * 0.8;
     }
+    
+    // Audio-reactive corona effect
+    float corona = pow(fresnel, 1.5) * audioEnergy * 2.0;
+    finalColor += vec3(corona * 0.6, corona * 0.4, corona * 0.8);
     
     gl_FragColor = vec4(finalColor, 1.0);
   }
