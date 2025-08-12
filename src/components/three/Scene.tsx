@@ -2,7 +2,7 @@
 
 import { Environment } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { useMemo } from 'react'
+import { useMemo, useEffect, useState } from 'react'
 import * as THREE from 'three'
 
 import type { SceneProps } from '@/types/three'
@@ -14,6 +14,15 @@ interface MainSceneProps extends SceneProps {
   enableEnvironment?: boolean
   enableParticles?: boolean
   particleCount?: number
+  audioData?: {
+    volume: number
+    bass: number
+    mid: number
+    treble: number
+    beat: boolean
+    beatStrength: number
+  }
+  isAudioPlaying?: boolean
 }
 
 /**
@@ -25,21 +34,62 @@ export default function Scene({
   scale = 1,
   enableEnvironment = true,
   enableParticles = true,
-  particleCount = 60
+  particleCount = 60,
+  audioData,
+  isAudioPlaying = false
 }: MainSceneProps) {
-  // Create pearlescent material with green→sky blue→baby pink gradient
-  const pearlescentMaterial = useMemo(() => new PearlescentMaterial({
-    colorPrimary: new THREE.Color('#98ff98'), // Soft mint green
-    colorSecondary: new THREE.Color('#87ceeb'), // Sky blue
-    colorAccent: new THREE.Color('#ffb6c1'), // Baby pink
-    fresnelPower: 2.0,
-    rimIntensity: 1.2,
-    fresnelBias: 0.05
+  
+  const sceneStartTime = Date.now()
+  console.log('🎭 Scene: Component rendering/mounting at', sceneStartTime, 'ms')
+  
+  useEffect(() => {
+    const sceneMountTime = Date.now()
+    console.log('🎭 Scene: Component MOUNTED at', sceneMountTime, 'ms, took:', (sceneMountTime - sceneStartTime), 'ms')
+    return () => {
+      console.log('🎭 Scene: Component UNMOUNTING')
+    }
+  }, [])
+  
+  // Debug: Log when Scene receives audio data (disabled for performance)
+  // if (audioData && audioData.volume > 0.01) {
+  //   console.log('🎭 Scene.tsx - Received Audio Data:', { volume: audioData.volume.toFixed(3), beat: audioData.beat })
+  // }
+
+  // Create pearlescent material with green→sky blue→baby pink gradient (async)
+  const [pearlescentMaterial, setPearlescentMaterial] = useState<PearlescentMaterial | null>(null)
+  
+  useEffect(() => {
+    const matStartTime = Date.now()
+    console.log('💫 Scene: Creating PearlescentMaterial at', matStartTime, 'ms')
+    
+    // Create material asynchronously to not block initial render
+    const timer = setTimeout(() => {
+      const material = new PearlescentMaterial({
+        colorPrimary: new THREE.Color('#98ff98'), // Soft mint green
+        colorSecondary: new THREE.Color('#87ceeb'), // Sky blue
+        colorAccent: new THREE.Color('#ffb6c1'), // Baby pink (back to original)
+        fresnelPower: 2.0,
+        rimIntensity: 1.2,
+        fresnelBias: 0.05
+      })
+      const matEndTime = Date.now()
+      console.log('💫 Scene: PearlescentMaterial created at', matEndTime, 'ms, took:', (matEndTime - matStartTime), 'ms')
+      setPearlescentMaterial(material)
+    }, 0)
+    
+    return () => clearTimeout(timer)
+  }, [])
+  
+  // Fallback material while pearlescent material is loading
+  const fallbackMaterial = useMemo(() => new THREE.MeshStandardMaterial({
+    color: '#98ff98', // Match original green
+    metalness: 0.9,
+    roughness: 0.1
   }), [])
 
   // Animate the material over time
   useFrame((state) => {
-    if (pearlescentMaterial) {
+    if (pearlescentMaterial && pearlescentMaterial.time !== undefined) {
       pearlescentMaterial.time = state.clock.elapsedTime
     }
   })
@@ -81,7 +131,7 @@ export default function Scene({
         receiveShadow
       /> */}
       <Steve 
-        material={pearlescentMaterial}
+        material={pearlescentMaterial || fallbackMaterial}
         position={[0, 0, 0]}
         scale={0.4}
         castShadow
@@ -91,32 +141,35 @@ export default function Scene({
       {/* Pearl sphere demonstration */}
       <mesh position={[0.8, 0.3, 0.2]} castShadow receiveShadow>
         <sphereGeometry args={[0.15, 64, 64]} />
-        <primitive object={pearlescentMaterial} attach="material" />
+        <primitive object={pearlescentMaterial || fallbackMaterial} attach="material" />
       </mesh>
 
       {/* Additional geometric shapes to show material versatility */}
       <mesh position={[-0.6, 0.1, 0.3]} rotation={[0.3, 0.4, 0]} castShadow receiveShadow>
         <torusGeometry args={[0.12, 0.05, 16, 32]} />
-        <primitive object={pearlescentMaterial} attach="material" />
+        <primitive object={pearlescentMaterial || fallbackMaterial} attach="material" />
       </mesh>
 
       <mesh position={[0.2, -0.4, -0.3]} rotation={[0.5, 0, 0.3]} castShadow receiveShadow>
         <octahedronGeometry args={[0.1]} />
-        <primitive object={pearlescentMaterial} attach="material" />
+        <primitive object={pearlescentMaterial || fallbackMaterial} attach="material" />
       </mesh>
 
-      {/* Floating particles system with same pearlescent material */}
+      {/* Floating particles system */}
       {enableParticles && (
-        <FloatingParticles 
-          count={particleCount}
-          spread={3}
-          height={2}
-          depth={1.5}
-          speed={0.8}
-          rotationIntensity={0.4}
-          floatIntensity={0.6}
-          material={pearlescentMaterial}
-        />
+        <>
+          <FloatingParticles 
+            count={particleCount}
+            spread={8}
+            height={5}
+            depth={4}
+            speed={0.8}
+            rotationIntensity={0.4}
+            floatIntensity={0.6}
+            audioData={audioData}
+            isAudioPlaying={isAudioPlaying}
+          />
+        </>
       )}
 
     </group>

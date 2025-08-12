@@ -1,20 +1,71 @@
 'use client'
 
-import { Suspense } from 'react'
 import ThreeCanvas from '@/components/three/Canvas'
+import AudioPlayer from '@/components/ui/AudioPlayer'
+import ExperienceLoader from '@/components/ui/ExperienceLoader'
 import Header from '@/components/ui/Header'
 import ScrollAnimated from '@/components/ui/ScrollAnimated'
+import { useAudioAnalyzer } from '@/hooks/useAudioAnalyzer'
+import { useModelsReady } from '@/hooks/useModelLoader'
 import { useResponsiveThree } from '@/hooks/useThreePerformance'
+import { Suspense, useCallback, useState } from 'react'
 
 export default function Home() {
   const { deviceTier, settings } = useResponsiveThree()
+  const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null)
+  const [experienceStarted, setExperienceStarted] = useState(false)
+  const [shouldAutoPlay, setShouldAutoPlay] = useState(false)
+  
+  // Track model loading
+  const modelsLoaded = useModelsReady(['/models/Stev3.glb'])
+  
+  // Audio analysis hook - more responsive settings
+  const { audioData, isPlaying } = useAudioAnalyzer({ 
+    audioElement,
+    fftSize: 512, // Higher resolution for better frequency analysis
+    beatThreshold: 0.08 // Even more sensitive for more flashing (was 0.15)
+  })
+
+  // Optional: Debug audio data (disabled for performance)
+  // if (experienceStarted && audioData && audioData.volume > 0.01) {
+  //   console.log('🎵 Audio Data:', { volume: audioData.volume.toFixed(3), beat: audioData.beat })
+  // }
+
+  const handleAudioRef = useCallback((audio: HTMLAudioElement | null) => {
+    setAudioElement(audio)
+  }, [])
+
+  const handleStartExperience = useCallback(() => {
+    const clickTime = Date.now()
+    console.log('🚀 USER CLICKED ENTER at', clickTime, 'ms - Starting 3D experience with music')
+    setExperienceStarted(true)
+    setShouldAutoPlay(true)
+  }, [])
 
   return (
     <>
-      <Header />
+      {!experienceStarted && (
+        <ExperienceLoader 
+          onStartExperience={handleStartExperience}
+          modelsLoaded={modelsLoaded}
+        />
+      )}
       
-      {/* Three.js Canvas - Fixed background for entire page */}
-      <div className="canvas-container">
+      {experienceStarted && (
+        <>
+          <Header />
+          
+          {/* Audio Player - Only render when experience starts */}
+          <AudioPlayer 
+            src="/steve.mp3"
+            autoPlay={shouldAutoPlay}
+            loop={true}
+            volume={0.3}
+            onAudioRef={handleAudioRef}
+          />
+          
+          {/* Three.js Canvas - Fixed background for entire page */}
+          <div className="canvas-container">
         <Suspense 
           fallback={
             <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-slate-100">
@@ -34,6 +85,8 @@ export default function Home() {
             }}
             enableScrollAnimation={true}
             scrollTrigger="body"
+            audioData={audioData}
+            isAudioPlaying={isPlaying}
           />
         </Suspense>
       </div>
@@ -458,6 +511,8 @@ function YourModel() {
         </div>
       </footer>
     </main>
+        </>
+      )}
     </>
   )
 }

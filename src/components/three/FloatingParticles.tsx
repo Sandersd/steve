@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import { Float } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+import MusicReactiveMaterial from './shaders/MusicReactiveMaterial'
 
 interface FloatingParticlesProps {
   count?: number
@@ -13,7 +14,15 @@ interface FloatingParticlesProps {
   speed?: number
   rotationIntensity?: number
   floatIntensity?: number
-  material?: THREE.Material
+  audioData?: {
+    volume: number
+    bass: number
+    mid: number
+    treble: number
+    beat: boolean
+    beatStrength: number
+  }
+  isAudioPlaying?: boolean
 }
 
 /**
@@ -27,23 +36,63 @@ export default function FloatingParticles({
   speed = 0.6,
   rotationIntensity = 0.3,
   floatIntensity = 0.7,
-  material
+  audioData,
+  isAudioPlaying = false
 }: FloatingParticlesProps) {
   
-  // Create particle materials if custom material is provided
+  // Always create music-reactive materials (simplified)
   const particleMaterials = useMemo(() => {
-    if (!material) return null
-    // Create a clone of the material for each particle to ensure proper rendering
-    return Array.from({ length: count }, () => material.clone())
-  }, [count, material])
+    console.log('FloatingParticles: Creating music-reactive materials for', count, 'particles')
+    
+    const materials = Array.from({ length: count }, () => new MusicReactiveMaterial({
+      baseColor: new THREE.Color('#ff8c42'), // Bright orange base
+      bassColor: new THREE.Color('#ff6b35'), // Deep orange for bass
+      midColor: new THREE.Color('#ffa726'), // Medium orange for mid  
+      trebleColor: new THREE.Color('#ffcc80'), // Light orange for treble
+      beatColor: new THREE.Color('#fff3e0') // Very light orange for beats
+    }))
+    
+    console.log('🎶 FloatingParticles: Created', materials.length, 'music-reactive materials')
+    return materials
+  }, [count]) // Only depend on count
 
-  // Animate all particle materials
+  // Animate all particle materials and update audio data
   useFrame((state) => {
     if (particleMaterials) {
       particleMaterials.forEach(mat => {
+        // Update time for all materials - but freeze time when paused for instant stop
         if (mat && 'time' in mat && typeof (mat as { time?: number }).time !== 'undefined') {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (mat as any).time = state.clock.elapsedTime
+          if (isAudioPlaying) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (mat as any).time = state.clock.elapsedTime
+          }
+          // When paused, don't update time - this freezes the animation instantly
+        }
+        
+        // Update audio data for all materials (they're all music-reactive now)
+        if (mat instanceof MusicReactiveMaterial) {
+          if (audioData && isAudioPlaying && audioData.volume > 0.01) {
+            // ONLY use real audio data when music is actively playing AND has volume
+            mat.updateAudioData(audioData)
+            // Debug: Log audio data updates (throttled to avoid spam)
+            if (audioData.volume > 0.01 && Math.random() < 0.001) {
+              console.log('🎵 FloatingParticles: Updating material', { volume: audioData.volume.toFixed(3), beat: audioData.beat, isAudioPlaying })
+            }
+          } else {
+            // When audio is paused OR stopped OR muted, use zero values
+            mat.updateAudioData({
+              volume: 0, // No volume when paused - this stops the animation
+              bass: 0,
+              mid: 0,
+              treble: 0,
+              beat: false,
+              beatStrength: 0
+            })
+            // Debug: Log when using stopped state (throttled)
+            if (Math.random() < 0.001) {
+              console.log('⏸️ FloatingParticles: Using stopped audio data', { isAudioPlaying, hasVolume: audioData?.volume && audioData.volume > 0.01 })
+            }
+          }
         }
       })
     }
@@ -87,11 +136,11 @@ export default function FloatingParticles({
             <primitive object={particleMaterials[index]} attach="material" />
           ) : (
             <meshStandardMaterial 
-              color="#98ff98"
-              metalness={0.9}
+              color="#ff8c42"
+              metalness={0.8}
               roughness={0.1}
-              emissive="#98ff98"
-              emissiveIntensity={0.2}
+              emissive="#ff8c42"
+              emissiveIntensity={0.4}
             />
           )}
         </mesh>

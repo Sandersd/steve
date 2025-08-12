@@ -6,12 +6,14 @@ A production-ready **React Three Fiber** platform with custom GLSL shaders, GSAP
 
 ## ✨ Features
 
+- 🎵 **Real-Time Music Visualization** - Advanced Web Audio API integration with frequency analysis
 - 🎨 **Custom GLSL Shaders** - Pearlescent material with organic color animations
+- 🔶 **Music-Reactive Particles** - 60 orange particles responding to bass/mid/treble frequencies
 - 🔄 **GSAP ScrollTrigger** - Smooth scroll-driven camera animations  
 - ✨ **Post-Processing Pipeline** - Bloom effects, tone mapping for cinematic visuals
-- 🌟 **Floating Particle System** - Optimized instanced geometry
-- 📱 **Mobile Optimized** - Fixes for Safari URL bar, responsive performance
-- 🎭 **Professional Lighting** - Studio setup with dynamic shadows
+- ⚡ **Performance Optimized** - Async material loading, <200ms Steve model load time
+- 🎭 **Beat Detection** - Highly sensitive algorithm with instant pause/play response
+- 📱 **Mobile Optimized** - Responsive performance scaling and Safari compatibility
 - 🛠️ **TypeScript Ready** - Fully typed components and utilities
 - 🏗️ **Production Ready** - SEO, performance monitoring, deployment ready
 
@@ -29,7 +31,12 @@ npm install
 npm run dev
 ```
 
-Visit `http://localhost:3000` to see your 3D experience!
+Visit `http://localhost:3000` to see your 3D experience! Click "Enter" to start the music visualization.
+
+## 📚 Documentation
+
+- **[Music Visualization Features](./MUSIC_VISUALIZATION.md)** - Complete guide to audio-reactive features
+- **[Performance Optimizations](./PERFORMANCE_OPTIMIZATIONS.md)** - Technical details on optimization strategies
 
 ---
 

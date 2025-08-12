@@ -1,14 +1,14 @@
 'use client'
 
-import React, { useRef, useEffect, useMemo } from 'react'
 import { useFrame, useLoader } from '@react-three/fiber'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger'
+import { useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
-import GroupB from './models/GroupB'
 import BgBits from './models/BgBits'
+import GroupB from './models/GroupB'
 import PearlescentMaterial from './shaders/PearlescentMaterial'
 
 if (typeof window !== 'undefined') {
@@ -22,7 +22,7 @@ export default function ExperienceScene() {
   const scanLineRef = useRef<THREE.Mesh>(null!)
 
   // Load hand model for groupA
-  const gltf = useLoader(GLTFLoader, '/models/Steve1.glb')
+  const gltf = useLoader(GLTFLoader, '/models/Stev3.glb')
   
   // Create pearlescent material for hand
   const pearlescentMaterial = useMemo(() => new PearlescentMaterial({

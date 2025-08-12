@@ -16,6 +16,15 @@ interface ThreeCanvasProps {
   enablePostProcessing?: boolean
   enableScrollAnimation?: boolean
   scrollTrigger?: string
+  audioData?: {
+    volume: number
+    bass: number
+    mid: number
+    treble: number
+    beat: boolean
+    beatStrength: number
+  }
+  isAudioPlaying?: boolean
 }
 
 
@@ -39,8 +48,18 @@ export default function ThreeCanvas({
   },
   enablePostProcessing = true,
   enableScrollAnimation = true,
-  scrollTrigger = '#hero'
+  scrollTrigger = '#hero',
+  audioData,
+  isAudioPlaying = false
 }: ThreeCanvasProps) {
+
+  // Debug: Log when Canvas receives audio data (disabled for performance)
+  // if (audioData && audioData.volume > 0.01) {
+  //   console.log('🎨 Canvas.tsx - Received Audio Data:', { volume: audioData.volume.toFixed(3), beat: audioData.beat })
+  // }
+
+  // Debug: Canvas rendering (disabled)
+  // console.log('Canvas: Rendering Three.js Canvas component')
 
   return (
     <div className={`w-full h-full ${className}`}>
@@ -58,6 +77,8 @@ export default function ThreeCanvas({
         }}
         shadows={performance.enableShadows}
         onCreated={({ gl, scene }) => {
+          const rendererTime = Date.now()
+          console.log('🎨 Canvas: Three.js renderer created and ready at', rendererTime, 'ms')
           // Optimize WebGL settings
           gl.toneMapping = THREE.ACESFilmicToneMapping
           gl.toneMappingExposure = 1.0
@@ -74,16 +95,17 @@ export default function ThreeCanvas({
         }}
       >
         <Suspense fallback={null}>
+          {/* Camera rig with scroll animation */}
           {enableScrollAnimation ? (
             <CameraRig
               trigger={scrollTrigger}
               enableMouseParallax={true}
               parallaxIntensity={0.5}
             >
-              <Scene />
+              <Scene audioData={audioData} isAudioPlaying={isAudioPlaying} />
             </CameraRig>
           ) : (
-            <Scene />
+            <Scene audioData={audioData} isAudioPlaying={isAudioPlaying} />
           )}
 
           {enablePostProcessing && <PostProcessing />}
