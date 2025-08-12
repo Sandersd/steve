@@ -11,6 +11,7 @@ interface SteveProps {
   material?: THREE.Material
   castShadow?: boolean
   receiveShadow?: boolean
+  isAudioPlaying?: boolean
 }
 
 export default function Steve(props: SteveProps) {
@@ -29,15 +30,38 @@ export default function Steve(props: SteveProps) {
     console.log('🤖 Steve: Scene object ready in useEffect at', effectTime, 'ms, scene ready:', !!scene)
     console.log('🤖 Steve: Available animations:', names)
     
-    // Play the first available animation if any
+    // Set up the first available animation
     if (names.length > 0) {
       const firstAnimation = names[0]
-      console.log('🤖 Steve: Playing animation:', firstAnimation)
-      actions[firstAnimation]?.reset().fadeIn(0.5).play()
+      console.log('🤖 Steve: Setting up animation:', firstAnimation)
+      const action = actions[firstAnimation]
+      if (action) {
+        action.reset().fadeIn(0.5).play()
+        // Initial state based on audio
+        action.paused = !props.isAudioPlaying
+        console.log('🤖 Steve: Animation setup complete, paused:', action.paused)
+      }
     }
     
     console.log('🤖 Steve: About to return <primitive> element to renderer')
   }, [actions, names])
+  
+  // Separate effect to control animation playback based on audio state
+  useEffect(() => {
+    if (names.length > 0) {
+      const firstAnimation = names[0]
+      const action = actions[firstAnimation]
+      if (action) {
+        if (props.isAudioPlaying) {
+          action.paused = false
+          console.log('🤖 Steve: Resuming animation - audio started')
+        } else {
+          action.paused = true
+          console.log('🤖 Steve: Pausing animation - audio stopped')
+        }
+      }
+    }
+  }, [props.isAudioPlaying, actions, names])
   
   console.log('🤖 Steve: Returning <group> with <primitive object> at', Date.now(), 'ms')
   

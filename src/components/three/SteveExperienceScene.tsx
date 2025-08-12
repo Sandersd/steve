@@ -121,6 +121,7 @@ export default function SteveExperienceScene({
           scale={0.5} // Much larger scale for new model
           castShadow
           receiveShadow
+          isAudioPlaying={isAudioPlaying}
         />
       </group>
 

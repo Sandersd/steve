@@ -55,7 +55,7 @@ export default function Home() {
                     <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{background: 'var(--steve-orange-bright)'}}>
                       <span className="text-2xl font-bold text-white">S</span>
                     </div>
-                    <span className="text-2xl font-bold text-white">Steve le Poisson</span>
+                    <span className="text-2xl font-bold text-white" style={{fontFamily: 'var(--font-space-grotesk)'}}>Steve le Poisson</span>
                   </div>
 
                   {/* Navigation */}
@@ -125,8 +125,8 @@ export default function Home() {
                 <div className="inline-flex items-center px-6 py-3 backdrop-blur-sm border border-white/20 rounded-full text-sm mb-8" style={{background: 'rgba(217, 134, 22, 0.3)'}}>
                   <span className="font-bold">Le Poisson Qui Danse</span>
                 </div>
-                <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-                  Steve le Poisson
+                <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight" style={{fontFamily: 'var(--font-orbitron)', letterSpacing: '0.05em', textShadow: '0 4px 8px rgba(0,0,0,0.5)'}}>
+                  STEVE LE POISSON
                 </h1>
                 <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed">
                   Il est orange, il a des bras et des jambes!<br />
@@ -143,7 +143,7 @@ export default function Home() {
             {/* Side Panel - Steve's Stats */}
             <div id="sidePanel" className="absolute right-8 top-1/2 -translate-y-1/2 w-80 backdrop-blur-md border rounded-xl p-6 z-30 opacity-0" style={{background: 'rgba(217, 134, 22, 0.9)', borderColor: 'rgba(255, 255, 255, 0.3)'}}>
               <div className="flex items-center mb-4">
-                <span className="text-white font-bold">Steve's Dance Stats</span>
+                <span className="text-white font-bold" style={{fontFamily: 'var(--font-space-grotesk)'}}>Steve's Dance Stats</span>
               </div>
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
@@ -181,7 +181,7 @@ export default function Home() {
             {/* Left Panel - Additional card */}
             <div id="leftPanel" className="absolute left-8 top-1/3 w-72 backdrop-blur-md border rounded-xl p-6 z-30 opacity-0" style={{background: 'rgba(217, 134, 22, 0.9)', borderColor: 'rgba(255, 255, 255, 0.3)'}}>
               <div className="mb-4">
-                <span className="text-white font-bold">Steve's Features</span>
+                <span className="text-white font-bold" style={{fontFamily: 'var(--font-space-grotesk)'}}>Steve's Features</span>
               </div>
               <div className="space-y-3">
                 <div className="p-3 border rounded-lg" style={{background: 'rgba(255, 255, 255, 0.1)', borderColor: 'rgba(255, 255, 255, 0.3)'}}>
@@ -202,7 +202,7 @@ export default function Home() {
             {/* Bottom Panel - Final card with lyrics */}
             <div id="bottomPanel" className="absolute bottom-8 left-1/2 -translate-x-1/2 w-96 backdrop-blur-md border rounded-xl p-6 z-30 opacity-0" style={{background: 'rgba(217, 134, 22, 0.9)', borderColor: 'rgba(255, 255, 255, 0.3)'}}>
               <div className="text-center">
-                <h3 className="text-white font-bold mb-4">Steve's Song</h3>
+                <h3 className="text-white font-bold mb-4" style={{fontFamily: 'var(--font-space-grotesk)'}}>Steve's Song</h3>
                 <div className="text-lg text-white/90 font-mono animate-bounce mb-3">
                   🎵 Pa-la-la, pa-la-la 🎵
                 </div>

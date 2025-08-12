@@ -189,48 +189,59 @@ export function useAudioAnalyzer({
   useEffect(() => {
     if (!audioElement) return
     
-    const handlePlay = () => {
-      console.log('useAudioAnalyzer: Audio play event triggered')
-      console.log('useAudioAnalyzer: Audio context state:', audioContextRef.current?.state)
-      console.log('useAudioAnalyzer: Is analyzing:', isAnalyzing)
-      console.log('useAudioAnalyzer: Analyser exists:', !!analyserRef.current)
-      console.log('useAudioAnalyzer: Animation frame exists:', !!animationFrameRef.current)
+    const updatePlayingState = () => {
+      // Audio is considered "playing" if it's not paused AND not muted
+      const isActuallyPlaying = !audioElement.paused && !audioElement.muted
+      setIsPlaying(isActuallyPlaying)
       
-      setIsPlaying(true) // Track playing state
-      
-      if (audioContextRef.current?.state === 'suspended') {
-        console.log('useAudioAnalyzer: Resuming suspended audio context')
-        audioContextRef.current.resume()
-      }
-      
-      // Always try to start analysis when play is triggered
-      if (analyserRef.current) {
-        console.log('🎯 useAudioAnalyzer: Force starting analysis loop')
-        // Cancel any existing animation frame first
+      if (isActuallyPlaying) {
+        // Start analysis
+        if (audioContextRef.current?.state === 'suspended') {
+          console.log('useAudioAnalyzer: Resuming suspended audio context')
+          audioContextRef.current.resume()
+        }
+        
+        if (analyserRef.current) {
+          console.log('🎯 useAudioAnalyzer: Starting analysis loop')
+          // Cancel any existing animation frame first
+          if (animationFrameRef.current) {
+            cancelAnimationFrame(animationFrameRef.current)
+          }
+          analyze()
+        }
+      } else {
+        // Stop analysis
+        console.log('useAudioAnalyzer: Stopping analysis (paused or muted)')
         if (animationFrameRef.current) {
           cancelAnimationFrame(animationFrameRef.current)
+          animationFrameRef.current = null
         }
-        analyze()
-      } else {
-        console.log('❌ useAudioAnalyzer: Cannot start analysis - no analyser')
       }
+    }
+    
+    const handlePlay = () => {
+      console.log('useAudioAnalyzer: Audio play event triggered')
+      updatePlayingState()
     }
     
     const handlePause = () => {
       console.log('useAudioAnalyzer: Audio paused')
-      setIsPlaying(false) // Track paused state
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current)
-        animationFrameRef.current = null
-      }
+      updatePlayingState()
+    }
+    
+    const handleVolumeChange = () => {
+      console.log('useAudioAnalyzer: Volume/mute changed, muted:', audioElement.muted)
+      updatePlayingState()
     }
     
     audioElement.addEventListener('play', handlePlay)
     audioElement.addEventListener('pause', handlePause)
+    audioElement.addEventListener('volumechange', handleVolumeChange)
     
     return () => {
       audioElement.removeEventListener('play', handlePlay)
       audioElement.removeEventListener('pause', handlePause)
+      audioElement.removeEventListener('volumechange', handleVolumeChange)
     }
   }, [audioElement, analyze, isAnalyzing])
 
