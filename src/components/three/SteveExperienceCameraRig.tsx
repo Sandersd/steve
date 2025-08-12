@@ -45,9 +45,9 @@ export default function SteveExperienceCameraRig({ children }: SteveExperienceCa
     gsap.set('#leftPanel', { opacity: 0, x: -20 })
     gsap.set('#bottomPanel', { opacity: 0, y: 20 })
     
-    // Set initial camera position
-    camera.position.set(0, 0.45, 2.0)
-    camera.rotation.set(0, 0, 0)
+    // Set initial camera position - angle down slightly to look at Steve
+    camera.position.set(0, 0.55, 2.0) // raised Y position
+    camera.rotation.set(-0.1, 0, 0) // angle down slightly
 
     // Set initial positions for 3D groups - make them visible immediately
     if (groupARef.current) {
@@ -80,8 +80,8 @@ export default function SteveExperienceCameraRig({ children }: SteveExperienceCa
     ScrollTrigger.create({
       trigger: '.experience-container',
       start: 'top top',
-      end: '+=800%', // Match the main ScrollTrigger length
-      scrub: 0.5,
+      end: '+=800%', // Back to original scroll distance
+      scrub: 0.1, // Much more responsive (was 0.5)
       onUpdate: (self) => {
         const progress = self.progress
         
@@ -97,75 +97,125 @@ export default function SteveExperienceCameraRig({ children }: SteveExperienceCa
           gsap.set('#scrollBadge', { opacity: 0 })
         }
         
-        // 20–35%: sidePanel slides in
-        if (progress < 0.2) {
-          // Before 20%: hide completely
-          gsap.set('#sidePanel', { opacity: 0, x: 20, pointerEvents: 'none', visibility: 'hidden' })
-        } else if (progress >= 0.2 && progress < 0.35) {
-          const panelProgress = (progress - 0.2) / 0.15
-          gsap.set('#sidePanel', { 
-            opacity: panelProgress,
-            x: 20 - (20 * panelProgress),
-            pointerEvents: panelProgress > 0.5 ? 'auto' : 'none',
+        // 10–25%: "HE IS ORAAAANGE" text fades in
+        if (progress < 0.1) {
+          // Before 10%: hide completely
+          gsap.set('#orangeText', { opacity: 0, scale: 0.8, rotation: 1, visibility: 'hidden' })
+        } else if (progress >= 0.1 && progress < 0.25) {
+          const textProgress = (progress - 0.1) / 0.15
+          gsap.set('#orangeText', { 
+            opacity: textProgress,
+            scale: 0.8 + (0.2 * textProgress), // 0.8 → 1.0
+            rotation: 1 + (Math.sin(Date.now() * 0.0015) * 1), // gentle rotation
             visibility: 'visible'
           })
-        } else if (progress >= 0.35 && progress < 0.45) {
-          // Panel stays visible briefly
-          gsap.set('#sidePanel', { opacity: 1, x: 0, pointerEvents: 'auto', visibility: 'visible' })
-        } else if (progress >= 0.45) {
-          // Panel fades out as left panel comes in
-          const fadeProgress = (progress - 0.45) / 0.1
+        } else if (progress >= 0.25 && progress < 0.35) {
+          // Text stays visible briefly with animation
+          gsap.set('#orangeText', { 
+            opacity: 1, 
+            scale: 1,
+            rotation: 1 + (Math.sin(Date.now() * 0.0015) * 1),
+            visibility: 'visible' 
+          })
+        } else if (progress >= 0.35 && progress < 0.4) {
+          // Text fades out as next text comes in
+          const fadeProgress = (progress - 0.35) / 0.05
           const opacity = Math.max(0, 1 - fadeProgress)
-          gsap.set('#sidePanel', { 
+          gsap.set('#orangeText', { 
             opacity: opacity,
-            x: 20,
-            pointerEvents: opacity > 0.1 ? 'auto' : 'none',
+            scale: 1 - (0.1 * fadeProgress), // shrink out
+            rotation: 1 + (fadeProgress * 5), // spin out
+            visibility: opacity > 0 ? 'visible' : 'hidden'
+          })
+        } else if (progress >= 0.4) {
+          gsap.set('#orangeText', { opacity: 0, visibility: 'hidden' })
+        }
+
+        // 35–50%: "HE HAS ARMS" text fades in (moved down)
+        if (progress < 0.35) {
+          // Before 35%: hide completely
+          gsap.set('#armsText', { opacity: 0, scale: 0.8, rotation: 3, visibility: 'hidden' })
+        } else if (progress >= 0.35 && progress < 0.5) {
+          const textProgress = (progress - 0.35) / 0.15
+          gsap.set('#armsText', { 
+            opacity: textProgress,
+            scale: 0.8 + (0.2 * textProgress), // 0.8 → 1.0
+            rotation: 3 + (Math.sin(Date.now() * 0.001) * 2), // subtle wobble
+            visibility: 'visible'
+          })
+        } else if (progress >= 0.5 && progress < 0.6) {
+          // Text stays visible briefly with animation
+          gsap.set('#armsText', { 
+            opacity: 1, 
+            scale: 1,
+            rotation: 3 + (Math.sin(Date.now() * 0.001) * 2),
+            visibility: 'visible' 
+          })
+        } else if (progress >= 0.6) {
+          // Text fades out as next text comes in
+          const fadeProgress = (progress - 0.6) / 0.1
+          const opacity = Math.max(0, 1 - fadeProgress)
+          gsap.set('#armsText', { 
+            opacity: opacity,
+            scale: 1 - (0.2 * fadeProgress), // shrink out
+            rotation: 3 + (fadeProgress * 10), // spin out
             visibility: opacity > 0 ? 'visible' : 'hidden'
           })
         }
 
-        // 50–65%: leftPanel slides in from left
-        if (progress < 0.5) {
-          // Before 50%: hide completely
-          gsap.set('#leftPanel', { opacity: 0, x: -20, pointerEvents: 'none', visibility: 'hidden' })
-        } else if (progress >= 0.5 && progress < 0.65) {
-          const leftProgress = (progress - 0.5) / 0.15
-          gsap.set('#leftPanel', { 
-            opacity: leftProgress,
-            x: -20 + (20 * leftProgress),
-            pointerEvents: leftProgress > 0.5 ? 'auto' : 'none',
+        // 65–80%: "AND LEGS" text fades in (moved down)
+        if (progress < 0.65) {
+          // Before 65%: hide completely
+          gsap.set('#legsText', { opacity: 0, scale: 0.8, rotation: -2, visibility: 'hidden' })
+        } else if (progress >= 0.65 && progress < 0.8) {
+          const textProgress = (progress - 0.65) / 0.15
+          gsap.set('#legsText', { 
+            opacity: textProgress,
+            scale: 0.8 + (0.2 * textProgress), // 0.8 → 1.0
+            rotation: -2 + (Math.sin(Date.now() * 0.0008) * 3), // subtle wiggle
             visibility: 'visible'
           })
-        } else if (progress >= 0.65 && progress < 0.75) {
-          // Left panel stays visible briefly
-          gsap.set('#leftPanel', { opacity: 1, x: 0, pointerEvents: 'auto', visibility: 'visible' })
-        } else if (progress >= 0.75) {
-          // Left panel fades out as bottom panel comes in
-          const fadeProgress = (progress - 0.75) / 0.1
+        } else if (progress >= 0.8 && progress < 0.85) {
+          // Text stays visible briefly with animation
+          gsap.set('#legsText', { 
+            opacity: 1, 
+            scale: 1,
+            rotation: -2 + (Math.sin(Date.now() * 0.0008) * 3),
+            visibility: 'visible' 
+          })
+        } else if (progress >= 0.85) {
+          // Text fades out as next text comes in
+          const fadeProgress = (progress - 0.85) / 0.1
           const opacity = Math.max(0, 1 - fadeProgress)
-          gsap.set('#leftPanel', { 
+          gsap.set('#legsText', { 
             opacity: opacity,
-            x: -20,
-            pointerEvents: opacity > 0.1 ? 'auto' : 'none',
+            scale: 1 - (0.2 * fadeProgress), // shrink out
+            rotation: -2 + (fadeProgress * -15), // spin out opposite direction
             visibility: opacity > 0 ? 'visible' : 'hidden'
           })
         }
 
-        // 80–95%: bottomPanel slides up from bottom
-        if (progress < 0.8) {
-          // Before 80%: hide completely
-          gsap.set('#bottomPanel', { opacity: 0, y: 20, pointerEvents: 'none', visibility: 'hidden' })
-        } else if (progress >= 0.8 && progress < 0.95) {
-          const bottomProgress = (progress - 0.8) / 0.15
-          gsap.set('#bottomPanel', { 
-            opacity: bottomProgress,
-            y: 20 - (20 * bottomProgress),
-            pointerEvents: bottomProgress > 0.5 ? 'auto' : 'none',
+        // 90–100%: "PA-LA-LA" text fades in with grand finale (moved down)
+        if (progress < 0.9) {
+          // Before 90%: hide completely
+          gsap.set('#palalalaText', { opacity: 0, scale: 0.5, rotation: 1, visibility: 'hidden' })
+        } else if (progress >= 0.9 && progress < 0.95) {
+          const textProgress = (progress - 0.9) / 0.05
+          gsap.set('#palalalaText', { 
+            opacity: textProgress,
+            scale: 0.5 + (0.5 * textProgress), // 0.5 → 1.0 (dramatic entrance)
+            rotation: 1 + (Math.sin(Date.now() * 0.002) * 1), // gentle pulse rotation
             visibility: 'visible'
           })
         } else if (progress >= 0.95) {
-          // Bottom panel stays visible
-          gsap.set('#bottomPanel', { opacity: 1, y: 0, pointerEvents: 'auto', visibility: 'visible' })
+          // Text stays visible with continuous animation (grand finale)
+          const time = Date.now() * 0.001
+          gsap.set('#palalalaText', { 
+            opacity: 1, 
+            scale: 1 + (Math.sin(time * 2) * 0.05), // gentle pulsing
+            rotation: 1 + (Math.sin(time * 1.5) * 2), // gentle swaying
+            visibility: 'visible'
+          })
         }
       }
     })
@@ -174,7 +224,7 @@ export default function SteveExperienceCameraRig({ children }: SteveExperienceCa
     ScrollTrigger.create({
       trigger: '.experience-container',
       start: 'top top',
-      end: '+=800%', // Increased from 500% to 800% for longer scroll
+      end: '+=800%', // Back to original scroll distance animations
       pin: '.experience-container',
       pinSpacing: true,
       onUpdate: (self) => {
@@ -190,8 +240,8 @@ export default function SteveExperienceCameraRig({ children }: SteveExperienceCa
         
         if (progress <= 0.1) {
           // 0-10%: Initial position
-          targetX = 0; targetY = 0.45; targetZ = 2.0
-          targetRotY = 0
+          targetX = 0; targetY = 0.55; targetZ = 2.0
+          targetRotX = -0.1; targetRotY = 0
         } else if (progress <= 0.25) {
           // 10-25%: Gentle dolly-in + yaw left
           const t = easeInOutCubic((progress - 0.1) / 0.15)
@@ -226,8 +276,8 @@ export default function SteveExperienceCameraRig({ children }: SteveExperienceCa
           targetRotX = -0.06 + (0.06 * t) // level out
         } else {
           // 85-100%: Final neutral position
-          targetX = 0; targetY = 0.45; targetZ = 2.0
-          targetRotY = 0; targetRotX = 0
+          targetX = 0; targetY = 0.55; targetZ = 2.0
+          targetRotY = 0; targetRotX = -0.1
         }
         
         // Apply camera movement with lerp

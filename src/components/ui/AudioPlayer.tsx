@@ -87,7 +87,7 @@ export default function AudioPlayer({
     }
   }, [volume, loop, onAudioRef])
 
-  // Simple auto-play when component mounts with autoPlay=true
+  // Auto-play when autoPlay becomes true
   useEffect(() => {
     if (autoPlay && audioRef.current) {
       console.log('AudioPlayer: Auto-playing (Start Experience clicked)')
@@ -101,7 +101,7 @@ export default function AudioPlayer({
       }, 100)
       return () => clearTimeout(timer)
     }
-  }, []) // Only run once on mount
+  }, [autoPlay]) // Watch for autoPlay changes
 
   const togglePlay = () => {
     const audio = audioRef.current

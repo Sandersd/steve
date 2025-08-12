@@ -47,22 +47,19 @@ export default function SteveExperienceScene({
   useEffect(() => {
     console.log('🐟 Creating Steve\'s pearlescent material')
     
-    // Create material asynchronously
-    const timer = setTimeout(() => {
-      const material = new PearlescentMaterial({
-        colorPrimary: new THREE.Color('#D98616'), // Steve's orange
-        colorSecondary: new THREE.Color('#E5A94A'), // Steve's light orange
-        colorAccent: new THREE.Color('#FF9A1F'), // Steve's bright orange
-        fresnelPower: 2.0,
-        rimIntensity: 1.2,
-        fresnelBias: 0.05
-      })
-      console.log('🐟 Steve\'s material ready!')
-      setPearlescentMaterial(material)
-    }, 0)
-    
-    return () => clearTimeout(timer)
+    // Create material immediately (no delay)
+    const material = new PearlescentMaterial({
+      colorPrimary: new THREE.Color('#D98616'), // Steve's orange
+      colorSecondary: new THREE.Color('#E5A94A'), // Steve's light orange
+      colorAccent: new THREE.Color('#FF9A1F'), // Steve's bright orange
+      fresnelPower: 2.0,
+      rimIntensity: 1.2,
+      fresnelBias: 0.05
+    })
+    console.log('🐟 Steve\'s material ready!')
+    setPearlescentMaterial(material)
   }, [])
+  
   
   // Fallback material for Steve
   const fallbackMaterial = useMemo(() => new THREE.MeshStandardMaterial({

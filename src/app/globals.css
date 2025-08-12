@@ -106,6 +106,8 @@ section {
   left: 0;
   width: 100%;
   z-index: 1;
+  /* Orange gradient background for instant visibility */
+  background: linear-gradient(135deg, var(--steve-orange), var(--steve-orange-bright));
 }
 
 .content-sections {
@@ -183,4 +185,32 @@ body:has([data-page="experience"]) {
     width: 12px;
     height: 12px;
   }
+}
+
+/* Steve's Big Text Animations */
+@keyframes subtle-bounce {
+  0%, 100% { transform: translateY(0px) rotate(3deg); }
+  50% { transform: translateY(-15px) rotate(3deg); }
+}
+
+@keyframes subtle-wiggle {
+  0%, 100% { transform: translateX(0px) rotate(-2deg); }
+  25% { transform: translateX(-6px) rotate(-1deg); }
+  75% { transform: translateX(6px) rotate(-3deg); }
+}
+
+@keyframes rainbow-shimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes gentle-pulse {
+  0%, 100% { transform: scale(1) rotate(1deg); }
+  50% { transform: scale(1.02) rotate(1deg); }
+}
+
+@keyframes gentle-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
 }

@@ -36,7 +36,7 @@ export default function Steve(props: SteveProps) {
       console.log('🤖 Steve: Setting up animation:', firstAnimation)
       const action = actions[firstAnimation]
       if (action) {
-        action.reset().fadeIn(0.5).play()
+        action.reset().play()
         // Initial state based on audio
         action.paused = !props.isAudioPlaying
         console.log('🤖 Steve: Animation setup complete, paused:', action.paused)

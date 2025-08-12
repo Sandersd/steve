@@ -36,64 +36,18 @@ export default function Home() {
 
   return (
     <>
-      {!experienceStarted && (
-        <ExperienceLoader 
-          onStartExperience={handleStartExperience}
-          modelsLoaded={modelsLoaded}
-        />
-      )}
+      {/* Audio Player - Always available for immediate playback */}
+      <AudioPlayer 
+        src="/steve.mp3"
+        autoPlay={shouldAutoPlay}
+        loop={true}
+        volume={0.15}
+        onAudioRef={handleAudioRef}
+      />
       
-      {experienceStarted && (
+      {/* Always render the experience in background for instant model loading */}
+      <div style={{ visibility: experienceStarted ? 'visible' : 'hidden' }}>
         <div data-page="steve-fish">
-          {/* Fixed Header */}
-          <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
-            <nav style={{background: 'rgba(217, 134, 22, 0.9)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(217, 134, 22, 0.3)'}}>
-              <div className="max-w-7xl mx-auto px-6">
-                <div className="flex items-center justify-between h-16">
-                  {/* Logo */}
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{background: 'var(--steve-orange-bright)'}}>
-                      <span className="text-2xl font-bold text-white">S</span>
-                    </div>
-                    <span className="text-2xl font-bold text-white" style={{fontFamily: 'var(--font-space-grotesk)'}}>Steve le Poisson</span>
-                  </div>
-
-                  {/* Navigation */}
-                  <div className="hidden md:flex items-center space-x-8">
-                    <a href="#dance" className="text-white/80 hover:text-white transition-colors text-sm font-medium">
-                      Dance Moves
-                    </a>
-                    <a href="#features" className="text-white/80 hover:text-white transition-colors text-sm font-medium">
-                      About Steve
-                    </a>
-                    <a href="#memes" className="text-white/80 hover:text-white transition-colors text-sm font-medium">
-                      Memes
-                    </a>
-                    <a href="#music" className="text-white/80 hover:text-white transition-colors text-sm font-medium">
-                      Music
-                    </a>
-                  </div>
-
-                  {/* Fun Status */}
-                  <div className="flex items-center space-x-4">
-                    <div className="hidden sm:flex items-center space-x-2 px-3 py-1 rounded-full" style={{background: 'rgba(255, 255, 255, 0.2)'}}>
-                      <div className="w-2 h-2 rounded-full animate-bounce" style={{background: 'var(--steve-orange-bright)'}}></div>
-                      <span className="text-white text-xs font-medium">Steve is Dancing!</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </nav>
-          </header>
-          
-          {/* Audio Player */}
-          <AudioPlayer 
-            src="/steve.mp3"
-            autoPlay={shouldAutoPlay}
-            loop={true}
-            volume={0.15}
-            onAudioRef={handleAudioRef}
-          />
           
           {/* Main WebGL Experience - Pinned Section */}
           <div className="experience-container">
@@ -122,100 +76,125 @@ export default function Home() {
             {/* Hero Copy - Fades out early */}
             <div id="heroCopy" className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
               <div className="text-center text-white px-6">
-                <div className="inline-flex items-center px-6 py-3 backdrop-blur-sm border border-white/20 rounded-full text-sm mb-8" style={{background: 'rgba(217, 134, 22, 0.3)'}}>
-                  <span className="font-bold">Le Poisson Qui Danse</span>
-                </div>
-                <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight" style={{fontFamily: 'var(--font-orbitron)', letterSpacing: '0.05em', textShadow: '0 4px 8px rgba(0,0,0,0.5)'}}>
-                  STEVE LE POISSON
+                <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight transform hover:scale-105 transition-transform duration-300" style={{
+                  fontFamily: 'var(--font-orbitron)', 
+                  letterSpacing: '0.05em', 
+                  textShadow: '3px 3px 0px #916332, 6px 6px 0px rgba(0,0,0,0.3), 0 0 20px rgba(255,154,31,0.5)',
+                  background: 'linear-gradient(45deg, #FFE66D, #FF9A1F, #D98616)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text'
+                }}>
+                  LE POISSON STEVE
                 </h1>
-                <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed">
-                  Il est orange, il a des bras et des jambes!<br />
-                  Watch Steve dance with 120 musical particles in this meme-tastic experience!
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <button className="px-8 py-4 text-white rounded-xl transition-all transform hover:scale-105 font-bold shadow-2xl pointer-events-auto text-lg" style={{background: 'linear-gradient(to right, var(--steve-orange-bright), var(--steve-orange-light))'}}>
-                    Watch Steve Dance
-                  </button>
-                </div>
               </div>
             </div>
 
-            {/* Side Panel - Steve's Stats */}
-            <div id="sidePanel" className="absolute right-8 top-1/2 -translate-y-1/2 w-80 backdrop-blur-md border rounded-xl p-6 z-30 opacity-0" style={{background: 'rgba(217, 134, 22, 0.9)', borderColor: 'rgba(255, 255, 255, 0.3)'}}>
-              <div className="flex items-center mb-4">
-                <span className="text-white font-bold" style={{fontFamily: 'var(--font-space-grotesk)'}}>Steve's Dance Stats</span>
-              </div>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-white/80 text-sm">Dance Power</span>
-                  <span className="text-white font-bold text-sm">MAXIMUM!</span>
-                </div>
-                <div className="w-full rounded-full h-2" style={{background: 'rgba(255, 255, 255, 0.2)'}}>
-                  <div className="h-2 rounded-full animate-pulse" style={{background: 'linear-gradient(to right, var(--steve-orange-bright), var(--steve-orange-light))', width: '100%'}}></div>
-                </div>
-                
-                <div className="flex justify-between items-center">
-                  <span className="text-white/80 text-sm">Orangeness</span>
-                  <span className="text-white font-bold text-sm">Ultra Orange</span>
-                </div>
-                <div className="w-full rounded-full h-2" style={{background: 'rgba(255, 255, 255, 0.2)'}}>
-                  <div className="h-2 rounded-full" style={{background: 'var(--steve-orange)', width: '100%'}}></div>
-                </div>
-                
-                <div className="flex justify-between items-center">
-                  <span className="text-white/80 text-sm">Musical Vibes</span>
-                  <span className="text-white font-bold text-sm">Pa-la-la!</span>
-                </div>
-                <div className="w-full rounded-full h-2" style={{background: 'rgba(255, 255, 255, 0.2)'}}>
-                  <div className="h-2 rounded-full animate-pulse" style={{background: 'linear-gradient(to right, var(--steve-orange), var(--steve-orange-bright))', width: '95%'}}></div>
-                </div>
-              </div>
-              
-              <div className="mt-6 p-3 border rounded-lg" style={{background: 'rgba(255, 255, 255, 0.1)', borderColor: 'rgba(255, 255, 255, 0.3)'}}>
-                <div className="flex items-center">
-                  <span className="text-white text-sm font-medium">Steve is très beau!</span>
-                </div>
-              </div>
+            {/* Big Text: "HE IS ORAAAANGE" */}
+            <div id="orangeText" className="absolute left-1/2 -translate-x-1/2 top-1/4 z-30 opacity-0 transform rotate-1" style={{pointerEvents: 'none'}}>
+              <h2 className="text-6xl md:text-8xl font-black leading-none text-center transform hover:scale-105 transition-transform duration-500" style={{
+                fontFamily: 'var(--font-orbitron)',
+                background: 'linear-gradient(45deg, #FF6B35, #FF9A1F, #FFE66D, #FF9A1F)',
+                backgroundSize: '300% 100%',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                textShadow: '4px 4px 0px #916332, 8px 8px 0px rgba(0,0,0,0.3)',
+                letterSpacing: '0.02em',
+                animation: 'subtle-bounce 1.5s ease-in-out infinite, rainbow-shimmer 2s ease-in-out infinite'
+              }}>
+                HE IS<br />ORAAAANGE
+              </h2>
             </div>
 
-            {/* Left Panel - Additional card */}
-            <div id="leftPanel" className="absolute left-8 top-1/3 w-72 backdrop-blur-md border rounded-xl p-6 z-30 opacity-0" style={{background: 'rgba(217, 134, 22, 0.9)', borderColor: 'rgba(255, 255, 255, 0.3)'}}>
-              <div className="mb-4">
-                <span className="text-white font-bold" style={{fontFamily: 'var(--font-space-grotesk)'}}>Steve's Features</span>
-              </div>
-              <div className="space-y-3">
-                <div className="p-3 border rounded-lg" style={{background: 'rgba(255, 255, 255, 0.1)', borderColor: 'rgba(255, 255, 255, 0.3)'}}>
-                  <h4 className="text-white font-medium text-sm mb-1">Il est orange!</h4>
-                  <p className="text-white/70 text-xs">The most perfectly orange fish you've ever seen</p>
-                </div>
-                <div className="p-3 border rounded-lg" style={{background: 'rgba(255, 255, 255, 0.1)', borderColor: 'rgba(255, 255, 255, 0.3)'}}>
-                  <h4 className="text-white font-medium text-sm mb-1">Il a des bras et des jambes!</h4>
-                  <p className="text-white/70 text-xs">Unlike regular fish, Steve has arms and legs</p>
-                </div>
-                <div className="p-3 border rounded-lg" style={{background: 'rgba(255, 255, 255, 0.1)', borderColor: 'rgba(255, 255, 255, 0.3)'}}>
-                  <h4 className="text-white font-medium text-sm mb-1">Magical Powers!</h4>
-                  <p className="text-white/70 text-xs">Can swim on land AND walk in water</p>
-                </div>
-              </div>
+            {/* Big Text: "HE HAS ARMS" */}
+            <div id="armsText" className="absolute right-8 top-1/3 z-30 opacity-0 transform rotate-3" style={{pointerEvents: 'none'}}>
+              <h2 className="text-6xl md:text-8xl font-black leading-none transform hover:scale-105 transition-transform duration-500" style={{
+                fontFamily: 'var(--font-orbitron)',
+                background: 'linear-gradient(45deg, #FFE66D, #FF9A1F, #D98616)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                textShadow: '4px 4px 0px #916332, 8px 8px 0px rgba(0,0,0,0.3)',
+                letterSpacing: '0.02em',
+                animation: 'subtle-bounce 1.8s ease-in-out infinite, gentle-float 2.5s ease-in-out infinite'
+              }}>
+                HE HAS<br />ARMS
+              </h2>
             </div>
 
-            {/* Bottom Panel - Final card with lyrics */}
-            <div id="bottomPanel" className="absolute bottom-8 left-1/2 -translate-x-1/2 w-96 backdrop-blur-md border rounded-xl p-6 z-30 opacity-0" style={{background: 'rgba(217, 134, 22, 0.9)', borderColor: 'rgba(255, 255, 255, 0.3)'}}>
+            {/* Big Text: "AND LEGS" */}
+            <div id="legsText" className="absolute left-8 top-1/2 z-30 opacity-0 transform -rotate-2" style={{pointerEvents: 'none'}}>
+              <h2 className="text-6xl md:text-8xl font-black leading-none transform hover:scale-105 transition-transform duration-500" style={{
+                fontFamily: 'var(--font-orbitron)',
+                background: 'linear-gradient(135deg, #FF9A1F, #FFE66D, #F7931E)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                textShadow: '4px 4px 0px #916332, 8px 8px 0px rgba(0,0,0,0.3)',
+                letterSpacing: '0.02em',
+                animation: 'subtle-wiggle 2s ease-in-out infinite, gentle-float 2.2s ease-in-out infinite'
+              }}>
+                AND<br />LEGS
+              </h2>
+            </div>
+
+            {/* Big Text: "PA-LA-LA" */}
+            <div id="palalalaText" className="absolute bottom-16 left-1/2 -translate-x-1/2 z-30 opacity-0 transform rotate-1" style={{pointerEvents: 'none'}}>
               <div className="text-center">
-                <h3 className="text-white font-bold mb-4" style={{fontFamily: 'var(--font-space-grotesk)'}}>Steve's Song</h3>
-                <div className="text-lg text-white/90 font-mono animate-bounce mb-3">
-                  🎵 Pa-la-la, pa-la-la 🎵
-                </div>
-                <div className="text-sm text-white/80 mb-2">
-                  La-la, la-la, la-la-la ♪
-                </div>
-                <p className="text-white/70 text-xs italic">
-                  Steve's dancing is 100% organic and meme-powered
-                </p>
+                <h2 className="text-7xl md:text-9xl font-black leading-none transform hover:scale-105 transition-transform duration-500" style={{
+                  fontFamily: 'var(--font-orbitron)',
+                  background: 'linear-gradient(90deg, #FFE66D, #FF9A1F, #FFE66D, #F7931E)',
+                  backgroundSize: '300% 100%',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  textShadow: '5px 5px 0px #916332, 10px 10px 0px rgba(0,0,0,0.3)',
+                  letterSpacing: '0.05em',
+                  animation: 'rainbow-shimmer 1.5s ease-in-out infinite, gentle-pulse 2s ease-in-out infinite, gentle-float 2.5s ease-in-out infinite'
+                }}>
+                  PA-LA-LA
+                </h2>
+                <h3 className="text-4xl md:text-5xl font-bold mt-2 transform hover:scale-105 transition-transform duration-500" style={{
+                  fontFamily: 'var(--font-orbitron)',
+                  background: 'linear-gradient(90deg, #FF9A1F, #FFE66D, #FF9A1F)',
+                  backgroundSize: '200% 100%',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  textShadow: '3px 3px 0px #916332, 6px 6px 0px rgba(0,0,0,0.2)',
+                  letterSpacing: '0.03em',
+                  animation: 'rainbow-shimmer 1.8s ease-in-out infinite, gentle-float 2.2s ease-in-out infinite'
+                }}>
+                  pa-la-la
+                </h3>
               </div>
+            </div>
+
+            {/* Made with love by LooksGoodLabs */}
+            <div className="absolute bottom-4 left-4 z-30" style={{pointerEvents: 'auto'}}>
+              <a 
+                href="https://looksgoodlabs.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-white/70 hover:text-white transition-colors text-sm font-medium"
+                style={{
+                  fontFamily: 'var(--font-space-grotesk)',
+                  textShadow: '1px 1px 0px rgba(0,0,0,0.5)'
+                }}
+              >
+                Made with ❤️ by LooksGoodLabs
+              </a>
             </div>
           </div>
         </div>
+      </div>
+      
+      {!experienceStarted && (
+        <ExperienceLoader 
+          onStartExperience={handleStartExperience}
+          modelsLoaded={modelsLoaded}
+        />
       )}
     </>
   )

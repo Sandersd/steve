@@ -77,10 +77,10 @@ export default function SteveExperienceCanvas({
             gl.shadowMap.type = THREE.PCFSoftShadowMap
           }
 
-          // Set transparent background
+          // Set transparent background for proper HTML background visibility
           scene.background = null
-          // Optional: Add subtle fog without brown color
-          scene.fog = new THREE.Fog('#000000', 10, 20)    // Black fog for depth
+          // Remove fog for instant model visibility
+          scene.fog = null
         }}
       >
         <Suspense fallback={null}>
