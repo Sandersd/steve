@@ -105,7 +105,7 @@ export default function Steve(props: SteveProps) {
           // Stop cycling
           if (animationTimeoutRef.current) {
             clearTimeout(animationTimeoutRef.current)
-            animationTimeoutRef.current = undefined
+            animationTimeoutRef.current = null
           }
         }
       }
