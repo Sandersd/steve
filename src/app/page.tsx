@@ -3,16 +3,23 @@
 import SteveExperienceCanvas from '@/components/three/SteveExperienceCanvas'
 import AudioPlayer from '@/components/ui/AudioPlayer'
 import ExperienceLoader from '@/components/ui/ExperienceLoader'
+import ScrollIndicator from '@/components/ui/ScrollIndicator'
+import CornerAdminPanel, { type CornerSettings } from '@/components/admin/CornerAdminPanel'
 import { useAudioAnalyzer } from '@/hooks/useAudioAnalyzer'
 import { useModelsReady } from '@/hooks/useModelLoader'
 import { useResponsiveThree } from '@/hooks/useThreePerformance'
-import { Suspense, useCallback, useState } from 'react'
+import { Suspense, useCallback, useState, useMemo } from 'react'
+import { Settings } from 'lucide-react'
 
 export default function Home() {
   const { deviceTier, settings } = useResponsiveThree()
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null)
   const [experienceStarted, setExperienceStarted] = useState(false)
   const [shouldAutoPlay, setShouldAutoPlay] = useState(false)
+  
+  // Admin panel state - only used if enabled
+  const isAdminEnabled = process.env.NEXT_PUBLIC_ENABLE_ADMIN === 'true'
+  const [adminSettings, setAdminSettings] = useState<CornerSettings | null>(null)
   
   // Track model loading
   const modelsLoaded = useModelsReady(['/models/Steve-walk.glb'])
@@ -29,10 +36,21 @@ export default function Home() {
   }, [])
 
   const handleStartExperience = useCallback(() => {
-    console.log('🐟 Starting Steve the Dancing Fish experience!')
     setExperienceStarted(true)
     setShouldAutoPlay(true)
   }, [])
+
+  const handleSettingsChange = useCallback((settings: CornerSettings) => {
+    setAdminSettings(settings)
+  }, [])
+
+  // Memoize performance settings to prevent unnecessary re-renders
+  const performanceSettings = useMemo(() => ({
+    enableShadows: settings.shadows,
+    antialias: settings.antialias,
+    pixelRatio: settings.pixelRatio,
+    shadowMapSize: settings.shadowMapSize
+  }), [settings.shadows, settings.antialias, settings.pixelRatio, settings.shadowMapSize])
 
   return (
     <>
@@ -62,14 +80,10 @@ export default function Home() {
               }
             >
               <SteveExperienceCanvas
-                performance={{
-                  enableShadows: settings.shadows,
-                  antialias: settings.antialias,
-                  pixelRatio: settings.pixelRatio,
-                  shadowMapSize: settings.shadowMapSize
-                }}
+                performance={performanceSettings}
                 audioData={audioData}
                 isAudioPlaying={isPlaying}
+                adminSettings={isAdminEnabled ? adminSettings : null}
               />
             </Suspense>
 
@@ -171,6 +185,7 @@ export default function Home() {
               </div>
             </div>
 
+
             {/* Made with love by LooksGoodLabs */}
             <div className="absolute bottom-4 left-4 z-30" style={{pointerEvents: 'auto'}}>
               <a 
@@ -186,6 +201,9 @@ export default function Home() {
                 Made with ❤️ by LooksGoodLabs
               </a>
             </div>
+
+            {/* Scroll Indicator */}
+            {experienceStarted && <ScrollIndicator />}
           </div>
         </div>
       </div>
@@ -195,6 +213,11 @@ export default function Home() {
           onStartExperience={handleStartExperience}
           modelsLoaded={modelsLoaded}
         />
+      )}
+
+      {/* Corner Admin Panel */}
+      {isAdminEnabled && experienceStarted && (
+        <CornerAdminPanel onSettingsChange={handleSettingsChange} />
       )}
     </>
   )

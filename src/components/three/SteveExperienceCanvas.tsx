@@ -1,10 +1,11 @@
 'use client'
 
 import { Canvas } from '@react-three/fiber'
-import { Suspense } from 'react'
+import { Suspense, memo } from 'react'
 import * as THREE from 'three'
 
 import type { CameraSettings, PerformanceSettings } from '@/types/three'
+import type { CornerSettings } from '@/components/admin/CornerAdminPanel'
 import PostProcessing from './PostProcessing'
 import SteveExperienceCameraRig from './SteveExperienceCameraRig'
 import SteveExperienceScene from './SteveExperienceScene'
@@ -23,12 +24,13 @@ interface SteveExperienceCanvasProps {
     beatStrength: number
   }
   isAudioPlaying?: boolean
+  adminSettings?: CornerSettings | null
 }
 
 /**
  * Steve's Experience Canvas following exact experience page choreography
  */
-export default function SteveExperienceCanvas({
+const SteveExperienceCanvas = memo(function SteveExperienceCanvas({
   className = '',
   performance = {
     enableShadows: true,
@@ -45,7 +47,8 @@ export default function SteveExperienceCanvas({
   },
   enablePostProcessing = true,
   audioData,
-  isAudioPlaying = false
+  isAudioPlaying = false,
+  adminSettings
 }: SteveExperienceCanvasProps) {
 
   return (
@@ -64,8 +67,6 @@ export default function SteveExperienceCanvas({
         }}
         shadows={performance.enableShadows}
         onCreated={({ gl, scene }) => {
-          console.log('🐟 Steve Experience Canvas: Ready!')
-          
           // Optimize WebGL settings
           gl.toneMapping = THREE.ACESFilmicToneMapping
           gl.toneMappingExposure = 1.0
@@ -85,8 +86,8 @@ export default function SteveExperienceCanvas({
       >
         <Suspense fallback={null}>
           {/* Steve's Camera Rig with Experience Choreography */}
-          <SteveExperienceCameraRig>
-            <SteveExperienceScene audioData={audioData} isAudioPlaying={isAudioPlaying} />
+          <SteveExperienceCameraRig adminSettings={adminSettings}>
+            <SteveExperienceScene audioData={audioData} isAudioPlaying={isAudioPlaying} adminSettings={adminSettings} />
           </SteveExperienceCameraRig>
 
           {enablePostProcessing && <PostProcessing />}
@@ -94,4 +95,6 @@ export default function SteveExperienceCanvas({
       </Canvas>
     </div>
   )
-}
+})
+
+export default SteveExperienceCanvas

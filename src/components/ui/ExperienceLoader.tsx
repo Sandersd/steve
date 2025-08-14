@@ -101,7 +101,7 @@ export default function ExperienceLoader({
                     boxShadow: '0 8px 25px rgba(255,154,31,0.4), inset 0 2px 4px rgba(255,255,255,0.3)'
                   }}
                 >
-                  Enter Steve's World
+                  Dance with Steve
                 </button>
               </div>
             </>

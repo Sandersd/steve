@@ -2,12 +2,16 @@
 
 import { Environment } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, memo } from 'react'
 import * as THREE from 'three'
 
 import type { SceneProps } from '@/types/three'
+import type { CornerSettings } from '@/components/admin/CornerAdminPanel'
 import FloatingParticles from './FloatingParticles'
 import Steve from './models/Steve'
+import Steve3 from './models/Steve3'
+import SteveArms from './models/SteveArms'
+import SteveLegs from './models/SteveLegs'
 import PearlescentMaterial from './shaders/PearlescentMaterial'
 
 interface SteveExperienceSceneProps extends SceneProps {
@@ -22,13 +26,16 @@ interface SteveExperienceSceneProps extends SceneProps {
   isAudioPlaying?: boolean
   groupARef?: React.RefObject<THREE.Group>
   groupBRef?: React.RefObject<THREE.Group>
+  groupCRef?: React.RefObject<THREE.Group>
+  groupDRef?: React.RefObject<THREE.Group>
   bgBitsRef?: React.RefObject<THREE.Group>
+  adminSettings?: CornerSettings | null
 }
 
 /**
  * Steve's Experience Scene following exact choreography structure
  */
-export default function SteveExperienceScene({
+const SteveExperienceScene = memo(function SteveExperienceScene({
   position = [0, 0, 0],
   rotation = [0, 0, 0],
   scale = 1,
@@ -36,17 +43,18 @@ export default function SteveExperienceScene({
   isAudioPlaying = false,
   groupARef,
   groupBRef,
-  bgBitsRef
+  groupCRef,
+  groupDRef,
+  bgBitsRef,
+  adminSettings
 }: SteveExperienceSceneProps) {
   
-  console.log('🐟 Steve Experience Scene: Rendering')
+  // Removed frequent console logging for performance
   
   // Create pearlescent material for Steve (async)
   const [pearlescentMaterial, setPearlescentMaterial] = useState<PearlescentMaterial | null>(null)
   
   useEffect(() => {
-    console.log('🐟 Creating Steve\'s pearlescent material')
-    
     // Create material immediately (no delay)
     const material = new PearlescentMaterial({
       colorPrimary: new THREE.Color('#D98616'), // Steve's orange
@@ -56,7 +64,6 @@ export default function SteveExperienceScene({
       rimIntensity: 1.2,
       fresnelBias: 0.05
     })
-    console.log('🐟 Steve\'s material ready!')
     setPearlescentMaterial(material)
   }, [])
   
@@ -114,44 +121,50 @@ export default function SteveExperienceScene({
       <group ref={groupARef}>
         <Steve 
           // material={pearlescentMaterial || fallbackMaterial}
-          position={[0, 0, 0]}
-          scale={0.5} // Much larger scale for new model
+          position={adminSettings ? [adminSettings.steveX, adminSettings.steveY, adminSettings.steveZ] : [0.4, -0.2, 0]}
+          rotation={adminSettings ? [adminSettings.steveRotX, adminSettings.steveRotY, adminSettings.steveRotZ] : [0, 0, 0]}
+          scale={adminSettings?.steveScale || 0.4}
+          castShadow
+          receiveShadow
+          isAudioPlaying={isAudioPlaying}
+          audioData={audioData}
+        />
+      </group>
+
+      {/* groupB: Steve Arms coming from sides */}
+      <group ref={groupBRef}>
+        <SteveArms 
+          position={adminSettings ? [adminSettings.armsX, adminSettings.armsY, adminSettings.armsZ] : [0.1, 0.64, 0.86]}
+          rotation={adminSettings ? [adminSettings.armsRotX, adminSettings.armsRotY, adminSettings.armsRotZ] : [0, -2.73159265358979, 0]}
+          scale={adminSettings ? [adminSettings.armsScaleX, adminSettings.armsScaleY, adminSettings.armsScaleZ] : [0.85, 1.43, 0.38]}
           castShadow
           receiveShadow
           isAudioPlaying={isAudioPlaying}
         />
       </group>
 
-      {/* groupB: Geometric shapes cluster with orange elements */}
-      <group ref={groupBRef}>
-        {/* Cube */}
-        <mesh position={[-0.2, 0.1, 0]} castShadow receiveShadow>
-          <boxGeometry args={[0.15, 0.15, 0.15]} />
-          <primitive object={orangeMaterial} attach="material" />
-        </mesh>
+      {/* groupC: Steve Legs hanging from top */}
+      <group ref={groupCRef}>
+        <SteveLegs 
+          position={adminSettings ? [adminSettings.legsX, adminSettings.legsY, adminSettings.legsZ] : [-0.5, -0.56, 0]}
+          rotation={adminSettings ? [adminSettings.legsRotX, adminSettings.legsRotY, adminSettings.legsRotZ] : [0, 0.188407346410207, -0.011592653589793]}
+          scale={adminSettings ? [adminSettings.legsScaleX, adminSettings.legsScaleY, adminSettings.legsScaleZ] : [1.13, 1.42, 1.49]}
+          castShadow
+          receiveShadow
+          isAudioPlaying={isAudioPlaying}
+        />
+      </group>
 
-        {/* Sphere */}
-        <mesh position={[0.1, -0.1, 0.1]} castShadow receiveShadow>
-          <sphereGeometry args={[0.1, 16, 16]} />
-          <primitive object={pearlescentMaterial || fallbackMaterial} attach="material" />
-        </mesh>
-
-        {/* Orange "claws" - torus shapes */}
-        <mesh position={[0, 0.2, -0.1]} rotation={[0.3, 0.4, 0]} castShadow receiveShadow>
-          <torusGeometry args={[0.08, 0.03, 8, 16]} />
-          <primitive object={orangeMaterial} attach="material" />
-        </mesh>
-        
-        <mesh position={[0.2, -0.2, 0]} rotation={[0.7, 0.2, 0.5]} castShadow receiveShadow>
-          <torusGeometry args={[0.06, 0.02, 8, 16]} />
-          <primitive object={orangeMaterial} attach="material" />
-        </mesh>
-
-        {/* Additional geometric element */}
-        <mesh position={[-0.1, 0, -0.2]} rotation={[0.5, 0, 0.3]} castShadow receiveShadow>
-          <octahedronGeometry args={[0.08]} />
-          <primitive object={pearlescentMaterial || fallbackMaterial} attach="material" />
-        </mesh>
+      {/* groupD: Steve3 rising from bottom with PA-LA-LA */}
+      <group ref={groupDRef}>
+        <Steve3 
+          position={adminSettings ? [adminSettings.steve3X, adminSettings.steve3Y, adminSettings.steve3Z] : [0.42, 0, 0]}
+          rotation={adminSettings ? [adminSettings.steve3RotX, adminSettings.steve3RotY, adminSettings.steve3RotZ] : [0, -2.20159265358979, -0.061592653589793]}
+          scale={adminSettings?.steve3Scale || 1.2}
+          castShadow
+          receiveShadow
+          isAudioPlaying={isAudioPlaying}
+        />
       </group>
 
       {/* bgBits: Music visualization particles */}
@@ -171,4 +184,6 @@ export default function SteveExperienceScene({
 
     </group>
   )
-}
+})
+
+export default SteveExperienceScene

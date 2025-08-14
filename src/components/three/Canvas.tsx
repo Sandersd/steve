@@ -77,8 +77,6 @@ export default function ThreeCanvas({
         }}
         shadows={performance.enableShadows}
         onCreated={({ gl, scene }) => {
-          const rendererTime = Date.now()
-          console.log('🎨 Canvas: Three.js renderer created and ready at', rendererTime, 'ms')
           // Optimize WebGL settings
           gl.toneMapping = THREE.ACESFilmicToneMapping
           gl.toneMappingExposure = 1.0

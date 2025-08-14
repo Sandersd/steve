@@ -1,5 +1,5 @@
-import * as THREE from 'three'
 import type { ShaderMaterialUniforms } from '@/types/three'
+import * as THREE from 'three'
 
 const vertexShader = /* glsl */ `
   varying vec3 vNormal;
@@ -19,27 +19,27 @@ const vertexShader = /* glsl */ `
   void main() {
     vUv = uv;
     
-    // Enhanced beat-based scaling for more dramatic effect
-    float beatScale = 1.0 + (uBeat * uBeatStrength * 0.25);
+    // Toned down beat-based scaling for less extreme size changes
+    float beatScale = 1.0 + (uBeat * uBeatStrength * 0.08);
     vec3 scaledPosition = position * beatScale;
     
-    // Multi-layered volume-based displacement with wave patterns
-    float wave1 = sin(position.x * 15.0 + uTime * 3.0) * uVolume * 0.08;
-    float wave2 = cos(position.z * 12.0 + uTime * 2.5) * uVolume * 0.06;
+    // Toned down volume-based displacement with wave patterns
+    float wave1 = sin(position.x * 15.0 + uTime * 3.0) * uVolume * 0.03;
+    float wave2 = cos(position.z * 12.0 + uTime * 2.5) * uVolume * 0.025;
     scaledPosition.y += wave1;
     scaledPosition.x += wave2 * 0.5;
     
-    // Enhanced bass-reactive pulsing with multiple frequencies
-    float bassWave1 = sin(uTime * 6.0) * uBass * 0.12;
-    float bassWave2 = cos(uTime * 4.0 + position.y * 20.0) * uBass * 0.08;
+    // Toned down bass-reactive pulsing with multiple frequencies
+    float bassWave1 = sin(uTime * 6.0) * uBass * 0.04;
+    float bassWave2 = cos(uTime * 4.0 + position.y * 20.0) * uBass * 0.03;
     scaledPosition += normal * (bassWave1 + bassWave2);
     
-    // Treble-reactive sparkle displacement
-    float trebleJitter = sin(uTime * 15.0 + position.x * 30.0) * uTreble * 0.04;
+    // Toned down treble-reactive sparkle displacement
+    float trebleJitter = sin(uTime * 15.0 + position.x * 30.0) * uTreble * 0.015;
     scaledPosition += vec3(trebleJitter, trebleJitter * 0.5, trebleJitter * 0.3);
     
-    // Mid-frequency orbital motion
-    float midOrbit = uMid * 0.1;
+    // Toned down mid-frequency orbital motion
+    float midOrbit = uMid * 0.03;
     scaledPosition.x += sin(uTime * 3.0 + position.y * 8.0) * midOrbit;
     scaledPosition.z += cos(uTime * 3.0 + position.x * 8.0) * midOrbit;
     
@@ -106,6 +106,49 @@ const fragmentShader = /* glsl */ `
     vec3 normal = normalize(vNormal);
     vec3 viewDir = normalize(vViewDirection);
     
+    // Check if audio is playing (volume > 0)
+    float audioActive = step(0.01, uVolume);
+    
+    // === ORGANIC COLOR ANIMATION WHEN PAUSED/MUTED ===
+    vec3 pausedColor = vec3(0.0);
+    if (audioActive < 0.5) {
+      // Organic color blending between orange theme colors
+      float t1 = sin(uTime * 0.5 + vWorldPosition.x * 0.3) * 0.5 + 0.5;
+      float t2 = cos(uTime * 0.3 + vWorldPosition.y * 0.4) * 0.5 + 0.5;
+      float t3 = sin(uTime * 0.4 + vWorldPosition.z * 0.2) * 0.5 + 0.5;
+      
+      // Brighter orange theme colors
+      vec3 darkOrange = vec3(1.0, 0.72, 0.29); // Brighter version of #D98616
+      vec3 lightOrange = vec3(1.0, 0.86, 0.49); // Brighter version of #E5A94A
+      vec3 brightOrange = vec3(1.0, 0.75, 0.32); // Brighter version of #FF9A1F
+      vec3 cream = vec3(1.0, 0.98, 0.94); // #F5F4F0
+      
+      // Blend between colors organically
+      vec3 blend1 = mix(darkOrange, lightOrange, t1);
+      vec3 blend2 = mix(brightOrange, cream, t2);
+      pausedColor = mix(blend1, blend2, t3);
+      
+      // Organic brightness animation using layered noise
+      float noise1 = noise(vWorldPosition.xy * 2.0 + uTime * 0.3);
+      float noise2 = noise(vWorldPosition.yz * 3.0 - uTime * 0.2);
+      float noise3 = noise(vWorldPosition.xz * 1.5 + uTime * 0.25);
+      
+      // Combine noises for fractal-like effect
+      float fractalNoise = (noise1 * 0.5 + noise2 * 0.3 + noise3 * 0.2);
+      
+      // Organic brightness oscillation
+      float brightnessPulse = 0.7 + sin(uTime * 0.8 + fractalNoise * 3.0) * 0.3;
+      brightnessPulse += cos(uTime * 0.5 + vWorldPosition.x) * 0.2;
+      
+      // Apply shimmer and organic brightness
+      float shimmer = fractalNoise * 0.2;
+      pausedColor += vec3(shimmer);
+      pausedColor *= brightnessPulse * 1.5; // Apply organic brightness animation
+    } else {
+      pausedColor = uBaseColor; // Default to base color when playing
+    }
+    
+    // === NORMAL AUDIO-REACTIVE COLOR ===
     // Advanced frequency-based color mixing with more dynamic blending
     vec3 bassLayer = mix(uBaseColor, uBassColor, smoothstep(0.0, 1.0, uBass));
     vec3 midLayer = mix(bassLayer, uMidColor, smoothstep(0.0, 1.0, uMid * 1.2));
@@ -123,10 +166,13 @@ const fragmentShader = /* glsl */ `
       sin(uTime * 6.0 + audioEnergy * 12.0) * 0.25
     ) * audioEnergy;
     
-    vec3 finalColor = trebleLayer + beatFlash + energyShift;
+    vec3 audioColor = trebleLayer + beatFlash + energyShift;
     
-    // Enhanced volume-based brightness with non-linear scaling
-    float volumeBrightness = 0.4 + (pow(uVolume, 0.7) * 1.2);
+    // Mix between paused and audio-reactive colors
+    vec3 finalColor = mix(pausedColor, audioColor, audioActive);
+    
+    // Toned down volume-based brightness when playing
+    float volumeBrightness = audioActive > 0.5 ? 0.4 + (pow(uVolume, 0.7) * 0.4) : 1.0;
     finalColor *= volumeBrightness;
     
     // Add noise texture based on audio
@@ -145,17 +191,17 @@ const fragmentShader = /* glsl */ `
     vec3 rimColor = mix(trebleLayer, uBeatColor, vBeatPulse) * fresnel * rimIntensity * rimPulse;
     finalColor += rimColor * 2.0; // Much brighter rim effect
     
-    // Layered emissive glow with frequency separation
-    float bassGlow = uBass * 2.0;
-    float midGlow = uMid * 1.5;
-    float trebleGlow = uTreble * 1.8;
-    float beatGlow = vBeatPulse * 2.5;
+    // Toned down layered emissive glow with frequency separation
+    float bassGlow = uBass * 1.5;
+    float midGlow = uMid * 1.2;
+    float trebleGlow = uTreble * 1.5;
+    float beatGlow = vBeatPulse * 1.8;
     
     float totalGlow = bassGlow + midGlow + trebleGlow + beatGlow;
-    finalColor += finalColor * totalGlow * 0.8;
+    finalColor += finalColor * totalGlow * 0.6;
     
-    // Dynamic minimum brightness that pulses with the beat
-    float minGlow = 0.4 + (vBeatPulse * 0.3) + (sin(uTime * 3.0) * 0.1);
+    // Higher minimum brightness that pulses with the beat
+    float minGlow = 0.4 + (vBeatPulse * 0.2) + (sin(uTime * 3.0) * 0.1);
     finalColor = max(finalColor, vec3(minGlow));
     
     // Enhanced sparkle effects with multiple patterns

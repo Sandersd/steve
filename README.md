@@ -7,14 +7,16 @@ A revolutionary **React Three Fiber** platform featuring cutting-edge music visu
 ## ✨ Steve's Revolutionary Features
 
 - 🎵 **Advanced Music Visualization** - 120 dynamic particles with real-time frequency analysis
-- 🎨 **Spectacular GLSL Shaders** - Multi-layered pearlescent materials with audio-reactive effects
-- 🔥 **Enhanced Particle System** - Varied geometries with color variants responding to bass/mid/treble
+- 🎨 **Spectacular GLSL Shaders** - Multi-layered pearlescent materials with audio-reactive effects  
+- 🔥 **Enhanced Particle System** - Varied geometries with organic color blending when music is paused
 - 🎬 **Cinematic Scroll Animations** - Multi-keyframe camera movements with elastic and back easing
 - ⚡ **Performance Optimized** - Smooth 60fps experience across all devices
 - 🎭 **Beat Detection** - Ultra-sensitive algorithm with instant audio response
 - 📱 **Mobile Enhanced** - Responsive design with touch gesture support
 - 🛠️ **TypeScript Ready** - Fully typed for professional development
 - 🌈 **Visual Spectacle** - Post-processing effects, rim lighting, and audio-reactive corona
+- 🎛️ **Real-time Admin Panel** - Live 3D model adjustment with position, rotation, and scale controls
+- 📜 **Smart Scroll Indicator** - Animated guide that appears until giant Steve arrives
 
 ## 🚀 Quick Start
 
@@ -96,13 +98,26 @@ npm run lint         # Code quality check
 Steve transforms sound waves into visual poetry through advanced Web Audio API integration, creating a living, breathing 3D environment that pulses with every beat.
 
 ### 🎨 Visual Artistry  
-Custom GLSL shaders paint Steve's world with dynamic gradients, Fresnel effects, and audio-reactive materials that shimmer and flow with musical energy.
+Custom GLSL shaders paint Steve's world with dynamic gradients, Fresnel effects, and audio-reactive materials that shimmer and flow with musical energy. When music is paused, particles transition to organic color blending with fractal-based brightness animation.
 
 ### 🎬 Cinematic Motion
 GSAP-powered animations create fluid camera movements and object transformations that respond to your scroll, creating a choreographed dance between interaction and visual storytelling.
 
 ### 🚀 Performance First
 Optimized for buttery-smooth 60fps performance across desktop, mobile, and tablet devices with intelligent quality scaling.
+
+### 🎛️ Admin Panel Features
+Enable development mode to access the real-time admin panel:
+- **Live 3D Model Adjustment** - Position, rotation, and scale controls for all models
+- **Tabbed Interface** - Separate controls for Main Steve, Giant Steve, Arms, and Legs
+- **Copy Settings** - Export configurations as formatted JSON
+- **Reset Controls** - Restore default values instantly
+- **Working Sliders** - Fixed React conditional rendering issues for smooth interaction
+
+```bash
+# Enable admin panel in development
+echo "NEXT_PUBLIC_ENABLE_ADMIN=true" >> .env.local
+```
 
 ## 🌈 Color Palettes
 

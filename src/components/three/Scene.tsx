@@ -39,15 +39,9 @@ export default function Scene({
   isAudioPlaying = false
 }: MainSceneProps) {
   
-  const sceneStartTime = Date.now()
-  console.log('🎭 Scene: Component rendering/mounting at', sceneStartTime, 'ms')
   
   useEffect(() => {
-    const sceneMountTime = Date.now()
-    console.log('🎭 Scene: Component MOUNTED at', sceneMountTime, 'ms, took:', (sceneMountTime - sceneStartTime), 'ms')
-    return () => {
-      console.log('🎭 Scene: Component UNMOUNTING')
-    }
+    return () => {}
   }, [])
   
   // Debug: Log when Scene receives audio data (disabled for performance)
@@ -59,8 +53,6 @@ export default function Scene({
   const [pearlescentMaterial, setPearlescentMaterial] = useState<PearlescentMaterial | null>(null)
   
   useEffect(() => {
-    const matStartTime = Date.now()
-    console.log('💫 Scene: Creating PearlescentMaterial at', matStartTime, 'ms')
     
     // Create material asynchronously to not block initial render
     const timer = setTimeout(() => {
@@ -72,8 +64,6 @@ export default function Scene({
         rimIntensity: 1.2,
         fresnelBias: 0.05
       })
-      const matEndTime = Date.now()
-      console.log('💫 Scene: PearlescentMaterial created at', matEndTime, 'ms, took:', (matEndTime - matStartTime), 'ms')
       setPearlescentMaterial(material)
     }, 0)
     

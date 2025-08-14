@@ -1,7 +1,7 @@
 'use client'
 
 import { useAnimations, useGLTF } from '@react-three/drei'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 
 interface SteveProps {
@@ -12,60 +12,128 @@ interface SteveProps {
   castShadow?: boolean
   receiveShadow?: boolean
   isAudioPlaying?: boolean
+  audioData?: {
+    volume: number
+    bass: number
+    mid: number
+    treble: number
+    beat: boolean
+    beatStrength: number
+  }
 }
 
 export default function Steve(props: SteveProps) {
   const groupRef = useRef<THREE.Group>(null!)
-  const startTime = Date.now()
-  console.log('🤖 Steve: Component rendering/mounting at', startTime, 'ms')
+  const [currentAnimIndex, setCurrentAnimIndex] = useState(0)
+  const animationTimeoutRef = useRef<NodeJS.Timeout>()
   
-  console.log('🤖 Steve: About to call useGLTF at', Date.now(), 'ms')
-  const { scene, animations } = useGLTF('/models/Steve-walk.glb')
+  // Removed performance-impacting console logs
+  const { scene, animations } = useGLTF('/models/good-steve-dance.glb')
   const { actions, names } = useAnimations(animations, groupRef)
-  const afterGLTF = Date.now()
-  console.log('🤖 Steve: useGLTF returned at', afterGLTF, 'ms, scene ready:', !!scene, 'animations:', animations?.length || 0, 'took:', (afterGLTF - startTime), 'ms')
+  
+  // Function to play random animation
+  const playRandomAnimation = () => {
+    if (names.length > 0) {
+      // Stop current animation
+      const currentAction = actions[names[currentAnimIndex]]
+      if (currentAction) {
+        currentAction.fadeOut(0.2) // Faster transition for beat sync
+      }
+      
+      // Calculate random index (avoid repeating current)
+      let nextIndex = currentAnimIndex
+      if (names.length > 1) {
+        do {
+          nextIndex = Math.floor(Math.random() * names.length)
+        } while (nextIndex === currentAnimIndex)
+      }
+      setCurrentAnimIndex(nextIndex)
+      
+      // Play next animation
+      const nextAction = actions[names[nextIndex]]
+      if (nextAction) {
+        nextAction.reset().fadeIn(0.2).play()
+        nextAction.paused = !props.isAudioPlaying
+      }
+    }
+  }
+  
+  // Beat detection effect
+  useEffect(() => {
+    if (props.audioData?.beat && props.isAudioPlaying && names.length > 1) {
+      // Change animation on strong beats
+      if (props.audioData.beatStrength > 0.7) {
+        playRandomAnimation()
+      }
+    }
+  }, [props.audioData?.beat])
   
   useEffect(() => {
     const effectTime = Date.now()
-    console.log('🤖 Steve: Scene object ready in useEffect at', effectTime, 'ms, scene ready:', !!scene)
-    console.log('🤖 Steve: Available animations:', names)
     
-    // Set up the first available animation
+    // Set up the first animation
     if (names.length > 0) {
       const firstAnimation = names[0]
-      console.log('🤖 Steve: Setting up animation:', firstAnimation)
       const action = actions[firstAnimation]
       if (action) {
         action.reset().play()
-        // Initial state based on audio
         action.paused = !props.isAudioPlaying
-        console.log('🤖 Steve: Animation setup complete, paused:', action.paused)
+        
+        // No auto-cycling timeout needed - using beat sync instead
       }
     }
     
-    console.log('🤖 Steve: About to return <primitive> element to renderer')
+    return () => {
+      if (animationTimeoutRef.current) {
+        clearTimeout(animationTimeoutRef.current)
+      }
+    }
   }, [actions, names])
   
-  // Separate effect to control animation playback based on audio state
+  // Control animation playback and cycling based on audio state
   useEffect(() => {
     if (names.length > 0) {
-      const firstAnimation = names[0]
-      const action = actions[firstAnimation]
-      if (action) {
+      const currentAction = actions[names[currentAnimIndex]]
+      if (currentAction) {
         if (props.isAudioPlaying) {
-          action.paused = false
-          console.log('🤖 Steve: Resuming animation - audio started')
+          currentAction.paused = false
+          
+          // Beat sync will handle animation changes
         } else {
-          action.paused = true
-          console.log('🤖 Steve: Pausing animation - audio stopped')
+          currentAction.paused = true
+          
+          // Stop cycling
+          if (animationTimeoutRef.current) {
+            clearTimeout(animationTimeoutRef.current)
+            animationTimeoutRef.current = undefined
+          }
         }
       }
     }
-  }, [props.isAudioPlaying, actions, names])
+  }, [props.isAudioPlaying, actions, names, currentAnimIndex])
   
-  console.log('🤖 Steve: Returning <group> with <primitive object> at', Date.now(), 'ms')
+  // Removed performance-impacting console log
   
-  // Apply material directly if provided
+  // Apply material adjustments to reduce shininess
+  useEffect(() => {
+    if (scene) {
+      scene.traverse((child: THREE.Object3D) => {
+        if ('isMesh' in child && child.isMesh) {
+          const mesh = child as THREE.Mesh
+          if (mesh.material && 'metalness' in mesh.material) {
+            const mat = mesh.material as THREE.MeshStandardMaterial
+            mat.metalness = Math.max(0, mat.metalness - 0.3) // Reduce metalness
+            mat.roughness = Math.min(1, mat.roughness + 0.2) // Increase roughness
+            if (mat.emissiveIntensity) {
+              mat.emissiveIntensity *= 0.5 // Reduce glow
+            }
+          }
+        }
+      })
+    }
+  }, [scene])
+  
+  // Apply custom material if provided
   if (props.material && scene) {
     scene.traverse((child: THREE.Object3D) => {
       if ('isMesh' in child && child.isMesh && props.material) {
@@ -76,7 +144,7 @@ export default function Steve(props: SteveProps) {
   
   return (
     <group ref={groupRef} position={props.position} rotation={props.rotation} scale={props.scale}>
-      <primitive object={scene} castShadow={props.castShadow} receiveShadow={props.receiveShadow} />
+      <primitive object={scene} castShadow={props.castShadow} receiveShadow={props.receiveShadow} rotation={[-0.1, 0, 0]} />
     </group>
   )
 }

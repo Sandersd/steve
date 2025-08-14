@@ -39,21 +39,18 @@ export default function AudioPlayer({
 
     // Handle play/pause state changes
     const handlePlay = () => {
-      console.log('🎵 AudioPlayer: Audio started playing')
       setIsPlaying(true)
     }
     const handlePause = () => {
-      console.log('⏸️ AudioPlayer: Audio paused')
       setIsPlaying(false)
     }
     const handleEnded = () => {
-      console.log('⏹️ AudioPlayer: Audio ended')
       setIsPlaying(false)
     }
 
-    const handleLoadStart = () => console.log('📥 AudioPlayer: Started loading audio')
-    const handleCanPlay = () => console.log('✅ AudioPlayer: Audio can play')
-    const handleError = (e: Event) => console.log('❌ AudioPlayer: Audio error', e)
+    const handleLoadStart = () => {}
+    const handleCanPlay = () => {}
+    const handleError = (e: Event) => {}
 
     audio.addEventListener('play', handlePlay)
     audio.addEventListener('pause', handlePause)
@@ -90,12 +87,10 @@ export default function AudioPlayer({
   // Auto-play when autoPlay becomes true
   useEffect(() => {
     if (autoPlay && audioRef.current) {
-      console.log('AudioPlayer: Auto-playing (Start Experience clicked)')
       // Small delay to ensure audio is ready
       const timer = setTimeout(() => {
         if (audioRef.current && audioRef.current.paused) {
           audioRef.current.play().catch((error) => {
-            console.log('AudioPlayer: Auto-play failed:', error)
           })
         }
       }, 100)
@@ -110,7 +105,7 @@ export default function AudioPlayer({
     if (isPlaying) {
       audio.pause()
     } else {
-      audio.play().catch(console.log)
+      audio.play().catch(() => {})
     }
   }
 
@@ -164,6 +159,19 @@ export default function AudioPlayer({
             </svg>
           )}
         </button>
+        
+        {/* Music Credit */}
+        <div className="music-credit">
+          <a 
+            href="https://www.instagram.com/tomomp3" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="music-credit-link"
+            title="Music by @tomomp3"
+          >
+            Music by @tomomp3
+          </a>
+        </div>
       </div>
     </>
   )

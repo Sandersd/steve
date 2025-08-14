@@ -42,7 +42,6 @@ export default function FloatingParticles({
   
   // Always create music-reactive materials (simplified)
   const particleMaterials = useMemo(() => {
-    console.log('FloatingParticles: Creating music-reactive materials for', count, 'particles')
     
     const materials = Array.from({ length: count }, (_, index) => {
       // Create varied color palettes for more visual diversity
@@ -74,7 +73,6 @@ export default function FloatingParticles({
       return new MusicReactiveMaterial(variant)
     })
     
-    console.log('🎶 FloatingParticles: Created', materials.length, 'music-reactive materials')
     return materials
   }, [count]) // Only depend on count
 
@@ -82,13 +80,10 @@ export default function FloatingParticles({
   useFrame((state) => {
     if (particleMaterials) {
       particleMaterials.forEach(mat => {
-        // Update time for all materials - but freeze time when paused for instant stop
+        // Always update time for organic animation when paused
         if (mat && 'time' in mat && typeof (mat as { time?: number }).time !== 'undefined') {
-          if (isAudioPlaying) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (mat as any).time = state.clock.elapsedTime
-          }
-          // When paused, don't update time - this freezes the animation instantly
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (mat as any).time = state.clock.elapsedTime
         }
         
         // Update audio data for all materials (they're all music-reactive now)
@@ -96,10 +91,6 @@ export default function FloatingParticles({
           if (audioData && isAudioPlaying && audioData.volume > 0.01) {
             // ONLY use real audio data when music is actively playing AND has volume
             mat.updateAudioData(audioData)
-            // Debug: Log audio data updates (throttled to avoid spam)
-            if (audioData.volume > 0.01 && Math.random() < 0.001) {
-              console.log('🎵 FloatingParticles: Updating material', { volume: audioData.volume.toFixed(3), beat: audioData.beat, isAudioPlaying })
-            }
           } else {
             // When audio is paused OR stopped OR muted, use zero values
             mat.updateAudioData({
@@ -110,10 +101,6 @@ export default function FloatingParticles({
               beat: false,
               beatStrength: 0
             })
-            // Debug: Log when using stopped state (throttled)
-            if (Math.random() < 0.001) {
-              console.log('⏸️ FloatingParticles: Using stopped audio data', { isAudioPlaying, hasVolume: audioData?.volume && audioData.volume > 0.01 })
-            }
           }
         }
       })
