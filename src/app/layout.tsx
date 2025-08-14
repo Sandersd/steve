@@ -40,7 +40,7 @@ export const metadata: Metadata = {
       {
         url: '/steve-social.png',
         width: 1200,
-        height: 630,
+        height: 675,
         alt: 'Steve - Interactive 3D Experience',
       },
     ],
