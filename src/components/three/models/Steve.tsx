@@ -25,7 +25,7 @@ interface SteveProps {
 export default function Steve(props: SteveProps) {
   const groupRef = useRef<THREE.Group>(null!)
   const [currentAnimIndex, setCurrentAnimIndex] = useState(0)
-  const animationTimeoutRef = useRef<NodeJS.Timeout>()
+  const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   
   // Removed performance-impacting console logs
   const { scene, animations } = useGLTF('/models/good-steve-dance.glb')
