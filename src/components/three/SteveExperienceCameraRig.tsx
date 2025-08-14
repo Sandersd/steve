@@ -671,7 +671,7 @@ const SteveExperienceCameraRig = memo(function SteveExperienceCameraRig({ childr
         groupDRef,
         bgBitsRef,
         adminSettings
-      })}
+      } as React.Attributes)}
     </group>
   )
 })
