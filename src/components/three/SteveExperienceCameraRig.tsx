@@ -470,9 +470,14 @@ const SteveExperienceCameraRig = memo(function SteveExperienceCameraRig({ childr
             groupBRef.current.scale.setScalar(groupBScale)
             
             groupBRef.current.traverse((child) => {
-              if (child.material) {
-                child.material.transparent = true
-                child.material.opacity = groupBOpacity
+              if ('material' in child && child.material) {
+                const material = child.material as THREE.Material
+                if ('transparent' in material) {
+                  material.transparent = true
+                }
+                if ('opacity' in material) {
+                  material.opacity = groupBOpacity
+                }
               }
             })
           }
@@ -543,9 +548,14 @@ const SteveExperienceCameraRig = memo(function SteveExperienceCameraRig({ childr
             groupCRef.current.scale.setScalar(groupCScale)
             
             groupCRef.current.traverse((child) => {
-              if (child.material) {
-                child.material.transparent = true
-                child.material.opacity = groupCOpacity
+              if ('material' in child && child.material) {
+                const material = child.material as THREE.Material
+                if ('transparent' in material) {
+                  material.transparent = true
+                }
+                if ('opacity' in material) {
+                  material.opacity = groupCOpacity
+                }
               }
             })
           }
@@ -592,9 +602,14 @@ const SteveExperienceCameraRig = memo(function SteveExperienceCameraRig({ childr
             groupDRef.current.scale.setScalar(groupDScale)
             
             groupDRef.current.traverse((child) => {
-              if (child.material) {
-                child.material.transparent = true
-                child.material.opacity = groupDOpacity
+              if ('material' in child && child.material) {
+                const material = child.material as THREE.Material
+                if ('transparent' in material) {
+                  material.transparent = true
+                }
+                if ('opacity' in material) {
+                  material.opacity = groupDOpacity
+                }
               }
             })
           }
