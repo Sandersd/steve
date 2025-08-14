@@ -135,37 +135,6 @@ export default function CornerAdminPanel({ onSettingsChange }: CornerAdminPanelP
     }
   }
 
-  const Slider = ({ label, value, onChange, min = -3, max = 3, step = 0.01 }: {
-    label: string
-    value: number
-    onChange: (value: number) => void
-    min?: number
-    max?: number
-    step?: number
-  }) => (
-    <div style={{ marginBottom: '10px' }}>
-      <label style={{ display: 'block', marginBottom: '5px', color: '#d1d5db', fontSize: '12px' }}>
-        {label}: {value.toFixed(2)}
-      </label>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(e) => {
-          const newValue = parseFloat(e.target.value)
-          console.log(`${label} changed to:`, newValue)
-          onChange(newValue)
-        }}
-        style={{
-          width: '100%',
-          height: '20px',
-          background: 'blue'
-        }}
-      />
-    </div>
-  )
 
   if (!isOpen) {
     return (

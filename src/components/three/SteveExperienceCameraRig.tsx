@@ -87,10 +87,11 @@ const SteveExperienceCameraRig = memo(function SteveExperienceCameraRig({ childr
     if (bgBitsRef.current) {
       // bgBits (music particles) - fully visible from start
       bgBitsRef.current.visible = true
-      bgBitsRef.current.children.forEach((child, i) => {
-        if (child.material) {
-          child.material.opacity = 1
-          child.material.transparent = false
+      bgBitsRef.current.children.forEach((child) => {
+        if ('material' in child && child.material) {
+          const material = child.material as any
+          material.opacity = 1
+          material.transparent = false
         }
       })
     }
@@ -241,7 +242,8 @@ const SteveExperienceCameraRig = memo(function SteveExperienceCameraRig({ childr
         
         // === CAMERA CHOREOGRAPHY ===
         let targetX = 0, targetY = 0.45, targetZ = 2.0
-        let targetRotX = 0, targetRotY = 0, targetRotZ = 0
+        let targetRotX = 0, targetRotY = 0
+        // const targetRotZ = 0 // Unused variable removed
         
         const easeInOutCubic = (t: number) => {
           return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
@@ -334,7 +336,7 @@ const SteveExperienceCameraRig = memo(function SteveExperienceCameraRig({ childr
             steveScale = 1 + (0.1 * t) + Math.sin(time * 2) * 0.02
           } else if (progress <= 0.45) {
             // 25-45%: Center stage with dance-like movement (continue from previous end state)
-            const localT = (progress - 0.25) / 0.2
+            // const localT = (progress - 0.25) / 0.2 // Unused variable removed
             const baseX = -0.2 // end position from previous section
             const baseY = 0.1 // end position from previous section
             const baseRotY = 0.5 // end rotation from previous section

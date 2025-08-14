@@ -27,12 +27,12 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Steve - Spectacular 3D Experience & Music Visualization",
+  title: "Steve",
   description: "Steve's cutting-edge 3D website featuring immersive music visualization, dynamic particle systems, and stunning scroll animations",
   keywords: "Steve, 3D Experience, Music Visualization, WebGL, Three.js, Interactive Design",
   authors: [{ name: "Steve" }],
   openGraph: {
-    title: "Steve - Spectacular 3D Experience",
+    title: "Steve",
     description: "Experience Steve's revolutionary 3D website with music-reactive visuals and immersive animations",
     type: "website",
   },

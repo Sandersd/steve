@@ -9,10 +9,9 @@ import { useAudioAnalyzer } from '@/hooks/useAudioAnalyzer'
 import { useModelsReady } from '@/hooks/useModelLoader'
 import { useResponsiveThree } from '@/hooks/useThreePerformance'
 import { Suspense, useCallback, useState, useMemo } from 'react'
-import { Settings } from 'lucide-react'
 
 export default function Home() {
-  const { deviceTier, settings } = useResponsiveThree()
+  const { settings } = useResponsiveThree()
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null)
   const [experienceStarted, setExperienceStarted] = useState(false)
   const [shouldAutoPlay, setShouldAutoPlay] = useState(false)
