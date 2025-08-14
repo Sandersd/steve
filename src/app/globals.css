@@ -74,16 +74,22 @@ body {
 /* Additional mobile-specific optimizations */
 @media (max-width: 768px) and (hover: none) {
   .canvas-container {
-    /* Use the smallest viewport to prevent resizing */
+    /* Use the largest viewport to prevent black bars */
     height: 100vh;
-    height: 100svh;
+    height: 100dvh; /* Use dynamic viewport height */
+    min-height: 100vh;
+    min-height: 100dvh;
     /* Prevent rubber-band scrolling from affecting the canvas */
     position: fixed;
     /* Remove overflow hidden - it was hiding the 3D content */
   }
   
   .experience-container {
-    /* Ensure mobile can see 3D content */
+    /* Ensure mobile can see 3D content and handle address bar changes */
+    height: 100vh;
+    height: 100dvh; /* Use dynamic viewport height */
+    min-height: 100vh;
+    min-height: 100dvh;
     overflow: visible;
     -webkit-overflow-scrolling: touch;
   }
@@ -108,6 +114,8 @@ section {
   position: relative;
   height: 100vh;
   height: 100svh;
+  min-height: 100vh;
+  min-height: 100svh;
   overflow: hidden;
   top: 0;
   left: 0;

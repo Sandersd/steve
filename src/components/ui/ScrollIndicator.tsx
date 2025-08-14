@@ -35,11 +35,14 @@ export default function ScrollIndicator() {
 
   return (
     <div 
-      className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 pointer-events-none"
+      className="fixed bottom-8 md:bottom-8 z-40 pointer-events-none"
       style={{
+        left: '50%',
+        transform: 'translateX(-50%)',
         // Start fading only after 75% scroll, fully fade by 85%
         opacity: isNaN(scrollProgress) || scrollProgress < 0.75 ? 1 : Math.max(0, 1 - ((scrollProgress - 0.75) * 10)),
-        transform: `translateX(-50%)` // Keep centered
+        // Mobile-specific positioning to avoid address bar issues
+        bottom: window.innerWidth <= 768 ? '10vh' : '2rem'
       }}
     >
       <div className="flex flex-col items-center gap-2">
