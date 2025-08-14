@@ -89,9 +89,13 @@ const SteveExperienceCameraRig = memo(function SteveExperienceCameraRig({ childr
       bgBitsRef.current.visible = true
       bgBitsRef.current.children.forEach((child) => {
         if ('material' in child && child.material) {
-          const material = child.material as any
-          material.opacity = 1
-          material.transparent = false
+          const material = child.material as THREE.Material
+          if ('opacity' in material) {
+            material.opacity = 1
+          }
+          if ('transparent' in material) {
+            material.transparent = false
+          }
         }
       })
     }
