@@ -169,8 +169,8 @@ export function useResponsiveThree() {
           shadows: false,
           antialias: false,
           pixelRatio: [1, 1.5] as [number, number],
-          particles: 30,
-          shadowMapSize: 512
+          particles: 60, // Increased from 30 for better mobile experience
+          shadowMapSize: 1024 // Increased from 512
         }
       case 'high':
         return {
@@ -185,7 +185,7 @@ export function useResponsiveThree() {
           shadows: true,
           antialias: false,
           pixelRatio: [1, 2] as [number, number],
-          particles: 60,
+          particles: 80, // Increased from 60
           shadowMapSize: 2048
         }
     }

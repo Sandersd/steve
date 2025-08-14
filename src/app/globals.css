@@ -44,7 +44,7 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  /* Lenis smooth scroll will handle this */
 }
 
 body {
@@ -79,7 +79,13 @@ body {
     height: 100svh;
     /* Prevent rubber-band scrolling from affecting the canvas */
     position: fixed;
-    overflow: hidden;
+    /* Remove overflow hidden - it was hiding the 3D content */
+  }
+  
+  .experience-container {
+    /* Ensure mobile can see 3D content */
+    overflow: visible;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
@@ -131,7 +137,7 @@ body:has([data-page="experience"]) {
 /* Audio player controls */
 .audio-controls {
   position: fixed;
-  bottom: 2rem;
+  top: 2rem;
   right: 2rem;
   z-index: 100;
   display: flex;
@@ -193,7 +199,7 @@ body:has([data-page="experience"]) {
 /* Mobile responsive */
 @media (max-width: 768px) {
   .audio-controls {
-    bottom: 1rem;
+    top: 1rem;
     right: 1rem;
     padding: 0.5rem;
     gap: 0.25rem;
