@@ -54,7 +54,9 @@ const SteveExperienceCameraRig = memo(function SteveExperienceCameraRig({ childr
     // Set initial positions for 3D groups - make them visible immediately
     if (groupARef.current) {
       // groupA (Steve) - large on the right initially, lower on screen
-      groupARef.current.position.set(0.4, -0.2, 0) // Lower initial position
+      const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768
+      const initialX = isMobile ? 0.2 : 0.4 // Move Steve left on mobile initially
+      groupARef.current.position.set(initialX, -0.2, 0) // Lower initial position, adjusted for mobile
       groupARef.current.rotation.set(0, 0, 0) // No initial tilt, will be applied to model
       groupARef.current.scale.set(1, 1, 1)
       groupARef.current.visible = true
@@ -319,6 +321,10 @@ const SteveExperienceCameraRig = memo(function SteveExperienceCameraRig({ childr
         
         // === STEVE (groupA) CHOREOGRAPHY ===
         if (groupARef.current) {
+          // Mobile detection for positioning adjustments
+          const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768
+          const mobileXOffset = isMobile ? -0.2 : 0 // Move Steve left on mobile
+          
           let steveX = 0.4, steveY = 0, steveZ = 0
           let steveRotY = 0, steveRotX = 0, steveScale = 1
           
@@ -326,14 +332,14 @@ const SteveExperienceCameraRig = memo(function SteveExperienceCameraRig({ childr
           
           if (progress <= 0.1) {
             // 0-10%: Large on right, subtle idle movement
-            steveX = 0.4; steveY = -0.2; steveZ = 0 // Lower Y position
+            steveX = 0.4 + mobileXOffset; steveY = -0.2; steveZ = 0 // Lower Y position, adjust for mobile
             steveRotY = 0 + Math.sin(time) * 0.05 // subtle idle rotation
             steveRotX = Math.sin(time * 0.7) * 0.02 // slight head nod
             steveScale = 1 + Math.sin(time * 1.2) * 0.02 // subtle breathing scale
           } else if (progress <= 0.25) {
             // 10-25%: Dynamic slide left with spin and bounce
             const t = easeInOutCubic((progress - 0.1) / 0.15)
-            steveX = 0.4 + (-0.6 * t) // 0.4 → -0.2 (further left)
+            steveX = (0.4 + mobileXOffset) + (-0.6 * t) // 0.4 → -0.2 (further left), adjust for mobile
             steveY = -0.2 + (0.1 * t) + Math.sin(t * Math.PI * 2) * 0.05 // -0.2 → -0.1 with bounce
             steveRotY = 0 + (0.5 * t) + Math.sin(time) * 0.03 // spin with wobble
             steveRotX = Math.sin(t * Math.PI) * 0.1 // dramatic nod during movement
@@ -341,7 +347,7 @@ const SteveExperienceCameraRig = memo(function SteveExperienceCameraRig({ childr
           } else if (progress <= 0.45) {
             // 25-45%: Center stage with dance-like movement (continue from previous end state)
             // const localT = (progress - 0.25) / 0.2 // Unused variable removed
-            const baseX = -0.2 // end position from previous section
+            const baseX = (-0.2 + mobileXOffset) // end position from previous section, adjust for mobile
             const baseY = 0.1 // end position from previous section
             const baseRotY = 0.5 // end rotation from previous section
             const baseScale = 1.1 // end scale from previous section
@@ -355,12 +361,12 @@ const SteveExperienceCameraRig = memo(function SteveExperienceCameraRig({ childr
           } else if (progress <= 0.65) {
             // 45-65%: Dramatic retreat with spin (continue from previous end state)
             const t = easeInOutCubic((progress - 0.45) / 0.2)
-            const baseX = -0.2 // continue from previous section
+            const baseX = (-0.2 + mobileXOffset) // continue from previous section, adjust for mobile
             const baseY = 0.1 // continue from previous section
             const baseRotY = 0.5 // continue from previous section
             const baseScale = 1.1 // continue from previous section
             
-            steveX = baseX + (0.3 * t) // move back right: -0.2 → 0.1
+            steveX = baseX + (0.3 * t) // move back right: -0.2 → 0.1, but adjusted for mobile
             steveY = baseY + (0.3 * t) + Math.sin(t * Math.PI * 3) * 0.08 // spiraling up: 0.1 → 0.4
             steveZ = 0 + (-0.3 * t) // move back: 0 → -0.3
             steveRotY = baseRotY + (Math.PI * 2 * t) // full spin during retreat
@@ -368,7 +374,7 @@ const SteveExperienceCameraRig = memo(function SteveExperienceCameraRig({ childr
             steveScale = baseScale - (0.3 * t) // shrinking: 1.1 → 0.8
           } else {
             // 65%+: Floating in background with gentle movement (continue from previous end state)
-            const baseX = 0.1 // end position from previous section
+            const baseX = (0.1 + mobileXOffset) // end position from previous section, adjust for mobile
             const baseY = 0.4 // end position from previous section
             const baseZ = -0.3 // end position from previous section
             const baseRotY = 0.5 + Math.PI * 2 // end rotation from previous section
