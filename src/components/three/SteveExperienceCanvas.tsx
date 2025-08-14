@@ -63,9 +63,15 @@ const SteveExperienceCanvas = memo(function SteveExperienceCanvas({
         }}
         gl={{
           antialias: performance.antialias,
-          powerPreference: performance.powerPreference
+          powerPreference: performance.powerPreference,
+          alpha: true,
+          depth: true,
+          stencil: false,
+          preserveDrawingBuffer: false
         }}
         shadows={performance.enableShadows}
+        frameloop="always"
+        performance={{ min: 0.2 }}
         onCreated={({ gl, scene }) => {
           // Optimize WebGL settings
           gl.toneMapping = THREE.ACESFilmicToneMapping

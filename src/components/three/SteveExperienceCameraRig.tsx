@@ -107,7 +107,7 @@ const SteveExperienceCameraRig = memo(function SteveExperienceCameraRig({ childr
       end: '+=800%',
       pin: '.experience-container',
       pinSpacing: true,
-      scrub: 0.1, // Consistent scrub for both UI and 3D
+      scrub: 0.5, // Smoother scrub for production performance
       onUpdate: (self) => {
         const progress = self.progress
         
@@ -304,8 +304,8 @@ const SteveExperienceCameraRig = memo(function SteveExperienceCameraRig({ childr
         }
         
         
-        // Apply camera movement with faster lerp for smoother following
-        const lerpFactor = 0.15
+        // Apply camera movement with optimized lerp for production
+        const lerpFactor = 0.08
         camera.position.x += (targetX - camera.position.x) * lerpFactor
         camera.position.y += (targetY - camera.position.y) * lerpFactor
         camera.position.z += (targetZ - camera.position.z) * lerpFactor
