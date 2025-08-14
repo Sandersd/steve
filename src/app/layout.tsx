@@ -1,7 +1,7 @@
+import LenisProvider from "@/components/ui/LenisProvider";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Orbitron, Space_Grotesk } from "next/font/google";
 import "./globals.css";
-import LenisProvider from "@/components/ui/LenisProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,16 +29,16 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   title: "Steve",
-  description: "Steve's cutting-edge 3D website featuring immersive music visualization, dynamic particle systems, and stunning scroll animations",
+  description: "Le Poisson Steve",
   keywords: "Steve, 3D Experience, Music Visualization, WebGL, Three.js, Interactive Design",
-  authors: [{ name: "Steve" }],
+  authors: [{ name: "Steve", url: "https://looksgoodlabs.com" }],
   openGraph: {
     title: "Steve",
-    description: "Experience Steve's revolutionary 3D website with music-reactive visuals and immersive animations",
+    description: "Le Poisson Steve",
     type: "website",
     images: [
       {
-        url: '/steve-og-image.png',
+        url: '/steve-social.png',
         width: 1200,
         height: 630,
         alt: 'Steve - Interactive 3D Experience',
@@ -48,8 +48,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Steve's 3D Experience",
-    description: "Revolutionary 3D website with music visualization",
-    images: ['/steve-og-image.png'],
+    description: "Le Poisson Steve",
+    images: ['/steve-social.png'],
   },
 };
 
