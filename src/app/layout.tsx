@@ -35,11 +35,20 @@ export const metadata: Metadata = {
     title: "Steve",
     description: "Experience Steve's revolutionary 3D website with music-reactive visuals and immersive animations",
     type: "website",
+    images: [
+      {
+        url: '/steve-og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Steve - Interactive 3D Experience',
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Steve's 3D Experience",
     description: "Revolutionary 3D website with music visualization",
+    images: ['/steve-og-image.png'],
   },
 };
 
